@@ -120,19 +120,16 @@ footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
       <h1>Structure Shift Board</h1>
       <div class="muted small" id="meta">Loading the latest snapshot…</div>
     </div>
-    <div class="btns"><button class="btn main" id="refresh" type="button" hidden>Refresh from TradingView</button></div>
+    <div class="btns"></div>
   </header>
-  <div id="progWrap" hidden><div class="prog"><i id="progBar"></i></div><div class="muted small" id="progText"></div></div>
-  <div class="note" id="note" hidden></div>
   <main id="main" class="wrap" aria-live="polite"></main>
   <footer>
     <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H and 4H: 5-bar pivots, 1D: 3-bar, 1W: 2-bar). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree.</div>
     <div><b>Support and resistance</b> are clusters where several independent levels overlap: fib retracements (0.382 to 0.786) and extensions of the active leg on 4H, 1D and 1W (1H is structure only), the 1-year range fib, unfilled fair value gaps, recent swing highs and lows, structure levels and the 1D/1W EMA200 and 1W EMA50. Strong means 3 or more methods across timeframes, or a fib and an FVG together. Weak clusters are hidden.</div>
-    <div><b>Data.</b> Coins: Binance spot USDT pairs, 1H, 4H and 1D closed candles (1W built from 1D), fetched from the Binance API by GitHub every 4 hours, 7 minutes after each 4H close. Market gauges: TradingView (1H and 4H, loaded once a day by the 11:30 am task; 1D and 1W built from 4H). ETHBTC comes from Binance. The board rebuilds by itself whenever new candles arrive and logs every change; Refresh asks GitHub to rebuild now. Only closed candles are used, so a "pending" flag means the last close is already past the flip level of a higher timeframe. Analysis only, not financial advice.</div>
+    <div><b>Data.</b> This board reads only from <b>Market-Data</b>, the shared candle store every dashboard uses. Market-Data holds the coins as Binance spot USDT candles (1H, 4H, 1D; topped up every 4 hours, 7 minutes after each 4H close) and the market gauges as TradingView candles (1H, 4H; loaded once a day by the 11:30 am task). ETHBTC is Binance. Here 1W is built from 1D, and the gauges' 1D and 1W from 4H. The board rebuilds by itself whenever Market-Data gets new candles and logs every change; Refresh asks for a rebuild now. Only closed candles are used, so a "pending" flag means the last close is already past the flip level of a higher timeframe. Analysis only, not financial advice.</div>
   </footer>
 </div>
 
-<script src="shim.js"></script>
 <script src="ms.js"></script>
 <script>
 (function(){
@@ -144,10 +141,8 @@ const GAUGES={'TOTAL2ES':['CRYPTOCAP:TOTAL2ES',1e-9],'TOTAL3ES':['CRYPTOCAP:TOTA
 const GORDER=Object.keys(GAUGES);
 const gSym=s=>GAUGES[s]?GAUGES[s][0]:tvSym(s);
 const unit=s=>GAUGES[s]?(GAUGES[s][1]!==1?'B':/\.D$/.test(s)?'%':''):'';
-function sumBars(A,C){const m=new Map();C.t.forEach((t,i)=>m.set(t,i));const o={t:[],o:[],h:[],l:[],c:[],v:[]};A.t.forEach((t,i)=>{const j=m.get(t);if(j==null)return;o.t.push(t);for(const x of 'ohlc')o[x].push(A[x][i]+C[x][j]);o.v.push(0)});return o}
-async function gbars(s,iv,n){const g=GAUGES[s];if(g&&g[2]){const a=await bars(g[0],iv,n);await sleep(1200);return sumBars(a,await bars(g[2],iv,n))}return bars(gSym(s),iv,n)}
 function scaleBars(B,k){if(k===1)return B;const o={t:B.t,v:B.v};for(const x of 'ohlc')o[x]=B[x].map(y=>y*k);return o}
-let COINS={},LOG=[],META={},FILTER='all',DB=null,CANEDIT=false,MCP=null,BUSY=false;
+let COINS={},LOG=[],META={},FILTER='all';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const f=x=>MS.fmt(x);
@@ -162,20 +157,6 @@ const cls=s=>s==='Bullish'||s==='Uptrend'?'up':s==='Bearish'||s==='Downtrend'?'d
 /* ---------- data ---------- */
 function merge(c){if(!c||!c.sym)return;const o=COINS[c.sym];if(!o||(c.built||0)>=(o.built||0))COINS[c.sym]=c}
 async function loadBaseline(){try{const r=await fetch('data.json');const s=await r.json();Object.values(s.coins||{}).forEach(merge);META=s.meta||{};LOG=(s.events||[]).slice();}catch(e){}}
-async function loadDb(){
-  try{if(!window.claude||!window.claude.use)return;DB=await window.claude.use('db');if(!DB)return;
-    const snap=await DB.collection('ms').get();
-    snap.docs.forEach(d=>{const v=d.data();if(!v)return;if(d.id==='meta'){if((v.built||0)>=(META.built||0))META=v}else if(v.json){try{merge(JSON.parse(v.json))}catch(e){}}});
-    const lg=await DB.collection('mslog').orderBy('t','desc').limit(150).get();
-    const seen=new Set(LOG.map(e=>e.id));lg.docs.forEach(d=>{const v=d.data();if(v&&!seen.has(d.id)){v.id=d.id;LOG.push(v)}});
-    render();
-  }catch(e){}
-}
-async function initActions(){
-  try{const u=await window.claude.use('user');CANEDIT=u?await u.canEdit():false}catch(e){}
-  try{MCP=await window.claude.use('mcp')}catch(e){MCP=null}
-  if(MCP)$('refresh').hidden=false;
-}
 
 /* ---------- views ---------- */
 function counts(tf){const c={Uptrend:0,Range:0,Downtrend:0};ORDER.forEach(s=>{const x=COINS[s]&&COINS[s].tf[tf];if(x)c[x.trend]=(c[x.trend]||0)+1});return c}
@@ -241,34 +222,8 @@ document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest&&e.target.closest('.row[data-go]');if(g)g.click()}});
 window.addEventListener('hashchange',render);
 
-/* ---------- TradingView refresh ---------- */
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const ERR={needs_reauth:'Reconnect TradingView in claude.ai Settings, Connectors.',server_not_connected:'Add the TradingView connector in claude.ai Settings, Connectors.',not_in_manifest:'TradingView access was not allowed for this page.',not_granted:'TradingView access was not allowed for this page.'};
-let SERVER=null;
-async function bars(sym,interval,count){let last;for(const name of (SERVER?[SERVER]:['Trading View','Trading_View'])){
-  try{const r=await MCP.callTool(name,'mcp-tv-get-ohlcv',{symbol:sym,interval,count,format:'columns'},{cache:false});SERVER=name;
-   let p=r.payload;if(typeof p==='string'){try{p=JSON.parse(p)}catch(e){}}
-   if(!p||p.success===false||!p.bars||!Array.isArray(p.bars.t)||p.bars.t.length<30)throw {code:'tool_error',message:(p&&(p.error||p.message))||'no bars'};
-   return p.bars}catch(e){last=e;if(e&&(e.code==='server_not_connected'||e.code==='server_not_found'))continue;break}}throw last}
-function prog(i,n,txt){$('progWrap').hidden=false;$('progBar').style.width=(i/n*100)+'%';$('progText').textContent=txt}
-async function save(c,evs){if(!DB||!CANEDIT)return false;
-  try{await DB.doc('ms/c_'+c.sym).set({json:JSON.stringify(c),built:c.built,sym:c.sym});
-   for(const e of evs){const id=('e_'+e.t+'_'+e.sym+'_'+e.tf+'_'+e.type).replace(/[^A-Za-z0-9_\-]/g,'_');e.id=id;await DB.doc('mslog/'+id).set(e)}return true}catch(e){return false}}
-$('refresh').addEventListener('click',async()=>{if(BUSY)return;BUSY=true;const b=$('refresh');b.disabled=true;$('note').hidden=true;
-  const now=Math.floor(Date.now()/1000);let ok=0,failed=[],saved=0,evN=0,stop=null;
-  const ALL=GORDER.concat(ORDER);
-  for(let i=0;i<ALL.length;i++){const s=ALL[i],k=GAUGES[s]?GAUGES[s][1]:1;prog(i,ALL.length,`Pulling ${s} (${i+1} of ${ALL.length})…`);
-    try{const b4=scaleBars(await gbars(s,'4h',1000),k);await sleep(1200);const bd=scaleBars(await gbars(s,'1D',1200),k);
-      const r=MS.analyze(s,b4,bd,now,{symbol:gSym(s),source:'TradingView'});if(GAUGES[s]){r.kind='gauge';r.desc=COINS[s]&&COINS[s].desc||''}const evs=MS.diff(COINS[s],r,now);
-      COINS[s]=r;evs.forEach(e=>LOG.push(e));evN+=evs.length;ok++;if(await save(r,evs))saved++;render()}
-    catch(e){failed.push(s);if(e&&ERR[e.code]){stop=ERR[e.code];break}if(/quota|rate|too many/i.test(String(e&&e.message))){stop='TradingView paused the requests. Wait a few minutes and press the button again.';break}}
-    await sleep(1200)}
-  if(DB&&CANEDIT&&ok){try{await DB.doc('ms/meta').set({built:now,source:'TradingView button',n:ok,missing:failed})}catch(e){}}
-  prog(1,1,'');$('progWrap').hidden=true;b.disabled=false;BUSY=false;
-  $('note').hidden=false;$('note').textContent=(stop?stop+' ':'')+`Refreshed ${ok} coins and gauges from TradingView, ${evN} status change${evN===1?'':'s'}.`+(failed.length?` Failed: ${failed.join(', ')}.`:'')+(CANEDIT?(saved?' Saved for everyone who opens the board.':' Could not save to the board.'):' View-only: this refresh shows here but is not saved.');
-  render()});
 
-(async function(){await loadBaseline();render();loadDb();initActions()})();
+(async function(){await loadBaseline();render()})();
 })();
 </script>
 <script src="cloud.js"></script>
