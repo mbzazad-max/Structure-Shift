@@ -1,0 +1,518 @@
+{
+ "_about": "Every board row and the Market-Data series it is built from (<prefix>/<TF>). Coins: Binance 1H, 4H, 1D (1W from 1D). Gauges: TradingView 1H and 4H, 1D and 1W resampled from 4H (ETHBTC: Binance 1H and 4H). Order = board order.",
+ "coins": [
+  {
+   "sym": "BTC",
+   "tv": "BINANCE:BTCUSDT",
+   "series": "binance/BTCUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ETH",
+   "tv": "BINANCE:ETHUSDT",
+   "series": "binance/ETHUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "SOL",
+   "tv": "BINANCE:SOLUSDT",
+   "series": "binance/SOLUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "BNB",
+   "tv": "BINANCE:BNBUSDT",
+   "series": "binance/BNBUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "XRP",
+   "tv": "BINANCE:XRPUSDT",
+   "series": "binance/XRPUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ADA",
+   "tv": "BINANCE:ADAUSDT",
+   "series": "binance/ADAUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "DOGE",
+   "tv": "BINANCE:DOGEUSDT",
+   "series": "binance/DOGEUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "AVAX",
+   "tv": "BINANCE:AVAXUSDT",
+   "series": "binance/AVAXUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "LINK",
+   "tv": "BINANCE:LINKUSDT",
+   "series": "binance/LINKUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "LTC",
+   "tv": "BINANCE:LTCUSDT",
+   "series": "binance/LTCUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "XLM",
+   "tv": "BINANCE:XLMUSDT",
+   "series": "binance/XLMUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "TRX",
+   "tv": "BINANCE:TRXUSDT",
+   "series": "binance/TRXUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "SHIB",
+   "tv": "BINANCE:SHIBUSDT",
+   "series": "binance/SHIBUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "SUI",
+   "tv": "BINANCE:SUIUSDT",
+   "series": "binance/SUIUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "NEAR",
+   "tv": "BINANCE:NEARUSDT",
+   "series": "binance/NEARUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ICP",
+   "tv": "BINANCE:ICPUSDT",
+   "series": "binance/ICPUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "AAVE",
+   "tv": "BINANCE:AAVEUSDT",
+   "series": "binance/AAVEUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "UNI",
+   "tv": "BINANCE:UNIUSDT",
+   "series": "binance/UNIUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ENA",
+   "tv": "BINANCE:ENAUSDT",
+   "series": "binance/ENAUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "TAO",
+   "tv": "BINANCE:TAOUSDT",
+   "series": "binance/TAOUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "RENDER",
+   "tv": "BINANCE:RENDERUSDT",
+   "series": "binance/RENDERUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "FET",
+   "tv": "BINANCE:FETUSDT",
+   "series": "binance/FETUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ONDO",
+   "tv": "BINANCE:ONDOUSDT",
+   "series": "binance/ONDOUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "JUP",
+   "tv": "BINANCE:JUPUSDT",
+   "series": "binance/JUPUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "RAY",
+   "tv": "BINANCE:RAYUSDT",
+   "series": "binance/RAYUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "PEPE",
+   "tv": "BINANCE:PEPEUSDT",
+   "series": "binance/PEPEUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "WIF",
+   "tv": "BINANCE:WIFUSDT",
+   "series": "binance/WIFUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ARB",
+   "tv": "BINANCE:ARBUSDT",
+   "series": "binance/ARBUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "LDO",
+   "tv": "BINANCE:LDOUSDT",
+   "series": "binance/LDOUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "INJ",
+   "tv": "BINANCE:INJUSDT",
+   "series": "binance/INJUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "WLD",
+   "tv": "BINANCE:WLDUSDT",
+   "series": "binance/WLDUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ZEC",
+   "tv": "BINANCE:ZECUSDT",
+   "series": "binance/ZECUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "PUMP",
+   "tv": "BINANCE:PUMPUSDT",
+   "series": "binance/PUMPUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "ASTER",
+   "tv": "BINANCE:ASTERUSDT",
+   "series": "binance/ASTERUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "GRAM",
+   "tv": "BINANCE:GRAMUSDT",
+   "series": "binance/GRAMUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  },
+  {
+   "sym": "HYPE",
+   "tv": "BINANCE:HYPEUSDT",
+   "series": "binance/HYPEUSDT",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
+   ]
+  }
+ ],
+ "gauges": [
+  {
+   "sym": "TOTAL2ES",
+   "tv": "CRYPTOCAP:TOTAL2ES",
+   "series": [
+    "tv/CRYPTOCAP_TOTAL2ES"
+   ],
+   "scale": 1e-09,
+   "desc": "Market cap excl. BTC and ETH, $B",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "TOTAL3ES",
+   "tv": "CRYPTOCAP:TOTAL3ES",
+   "series": [
+    "tv/CRYPTOCAP_TOTAL3ES"
+   ],
+   "scale": 1e-09,
+   "desc": "Altcoins excl. BTC, ETH and stablecoins, $B",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "OTHERS",
+   "tv": "CRYPTOCAP:OTHERS",
+   "series": [
+    "tv/CRYPTOCAP_OTHERS"
+   ],
+   "scale": 1e-09,
+   "desc": "Market cap outside the top 10, $B",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "TOTAL",
+   "tv": "CRYPTOCAP:TOTAL",
+   "series": [
+    "tv/CRYPTOCAP_TOTAL"
+   ],
+   "scale": 1e-09,
+   "desc": "Total crypto market cap, $B",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "TOTALES",
+   "tv": "CRYPTOCAP:TOTALES",
+   "series": [
+    "tv/CRYPTOCAP_TOTALES"
+   ],
+   "scale": 1e-09,
+   "desc": "Total market cap excl. stablecoins, $B",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "BTCCAP",
+   "tv": "CRYPTOCAP:BTC",
+   "series": [
+    "tv/CRYPTOCAP_BTC"
+   ],
+   "scale": 1e-09,
+   "desc": "Bitcoin market cap, $B",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "BTC.D",
+   "tv": "CRYPTOCAP:BTC.D",
+   "series": [
+    "tv/CRYPTOCAP_BTC.D"
+   ],
+   "scale": 1,
+   "desc": "Bitcoin dominance, %",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "USDT.D+USDC.D",
+   "tv": "CRYPTOCAP:USDT.D",
+   "series": [
+    "tv/CRYPTOCAP_USDT.D",
+    "tv/CRYPTOCAP_USDC.D"
+   ],
+   "scale": 1,
+   "desc": "Stablecoin dominance, USDT.D plus USDC.D, %",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "ETHBTC",
+   "tv": "BINANCE:ETHBTC",
+   "series": [
+    "binance/ETHBTC"
+   ],
+   "scale": 1,
+   "desc": "ETH priced in BTC",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "STABLE.C",
+   "tv": "CRYPTOCAP:STABLE.C",
+   "series": [
+    "tv/CRYPTOCAP_STABLE.C"
+   ],
+   "scale": 1e-09,
+   "desc": "Total stablecoin market cap, $B (TradingView history from May 2025)",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
+   "sym": "MEME.C",
+   "tv": "CRYPTOCAP:MEME.C",
+   "series": [
+    "tv/CRYPTOCAP_MEME.C"
+   ],
+   "scale": 1e-09,
+   "desc": "Meme coin market cap, $B (TradingView history from May 2025)",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  }
+ ],
+ "removed": [
+  "MNT",
+  "VVV",
+  "LIT",
+  "LEO",
+  "XMR"
+ ]
+}

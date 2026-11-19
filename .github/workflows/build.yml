@@ -1,0 +1,74 @@
+name: Build and deploy Structure Shift
+# Rebuilds the board from Market-Data's closed candles and deploys it to Cloudflare.
+# Market-Data starts this workflow after every import that changes a series the board uses
+# (Binance every 4 hours, TradingView once a day); the Refresh button and a daily safety run start it too.
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this run (the Refresh button fills this in)'
+        required: false
+        default: 'manual'
+      force:
+        description: 'Rebuild even if no new candles arrived'
+        type: boolean
+        default: false
+  schedule:
+    - cron: '5 1 * * *'   # safety net once a day, after the daily TradingView load (12:05 Sydney summer time)
+  push:
+    branches: [main]
+    paths: ['public/**', 'worker/**', 'build/**', 'config/**', 'wrangler.jsonc', 'reference/**']
+permissions:
+  contents: write
+concurrency:
+  group: structure-shift
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Engine and page must match their checked-in checksums
+        run: sha256sum -c --quiet reference/SHA256SUMS
+      - name: Check secrets
+        env:
+          MD: ${{ secrets.MARKET_DATA_TOKEN }}
+        run: '[ -n "$MD" ] || { echo "::error::Secret MARKET_DATA_TOKEN is not set, so the shared data cannot be read. Nothing changed."; exit 1; }'
+      - uses: actions/checkout@v4
+        with:
+          repository: mbzazad-max/market-data
+          token: ${{ secrets.MARKET_DATA_TOKEN }}
+          path: md
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build the board from closed candles (keeps last good rows on any failure)
+        run: node build/build.js md ${{ (inputs.force || github.event_name == 'push') && '--force' || '' }}
+      - name: Engine test
+        run: node tests/engine.js
+      - name: Save the new board (one commit)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data.json public/freshness.json
+          if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
+          git commit -q -m "Board build $(node -p "require('./public/freshness.json').generated")"
+          for i in 1 2 3 4 5; do git push -q origin HEAD:main && exit 0; git pull -q --rebase origin main; sleep $((i*2)); done
+          echo "::error::Could not save the board."; exit 1
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          REFRESH_TOKEN: ${{ secrets.MARKET_DATA_TOKEN }}
+        run: |
+          CLOUDFLARE_API_TOKEN=$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '[:space:]'); CLOUDFLARE_ACCOUNT_ID=$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | tr -d '[:space:]')
+          export CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID
+          echo "Token length ${#CLOUDFLARE_API_TOKEN}, account id length ${#CLOUDFLARE_ACCOUNT_ID}"
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then echo "::warning::Cloudflare secrets not set; built but not deployed."; exit 0; fi
+          [ ${#CLOUDFLARE_ACCOUNT_ID} -eq 32 ] || { echo "::error::CLOUDFLARE_ACCOUNT_ID must be the 32-character Account ID, not the token."; exit 1; }
+          npx -y wrangler@4 deploy   # workers_dev is off: only the home site (dashboards) can reach this Worker
+          printf '%s' "$REFRESH_TOKEN" | npx -y wrangler@4 secret put GITHUB_TOKEN

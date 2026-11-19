@@ -1,0 +1,273 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Structure Shift Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: summary matrix up top, then one row per coin with three timeframe cells (stack to cards on phones); #SYM opens a coin sheet. */
+:root{
+  --bg:#eef1f4; --panel:#ffffff; --ink:#15202b; --muted:#5b6b7a; --line:#d6dde4; --soft:#e5eaef;
+  --bull:#0b7a63; --bull-bg:#dcf1ea; --bear:#b8432a; --bear-bg:#f8e3dc; --rng:#8a6400; --rng-bg:#f6ecd0;
+  --acc:#2f5bb8; --acc-bg:#e2e9f8;
+  --display:'Barlow Semi Condensed','Arial Narrow',system-ui,sans-serif;
+  --sans:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f151b; --panel:#161e26; --ink:#e3eaf1; --muted:#93a3b3; --line:#27333e; --soft:#1d2731;
+  --bull:#4fd1ad; --bull-bg:#103128; --bear:#ff9478; --bear-bg:#37211b; --rng:#f0c55b; --rng-bg:#33290f;
+  --acc:#86a8ff; --acc-bg:#1a2742; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --panel:#161e26; --ink:#e3eaf1; --muted:#93a3b3; --line:#27333e; --soft:#1d2731;
+  --bull:#4fd1ad; --bull-bg:#103128; --bear:#ff9478; --bear-bg:#37211b; --rng:#f0c55b; --rng-bg:#33290f;
+  --acc:#86a8ff; --acc-bg:#1a2742; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:28px;font-weight:700;letter-spacing:.01em}
+h2{font-size:19px;font-weight:600}
+h3{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:13px}
+a{color:var(--acc)}
+header{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:space-between}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
+.btn.main{background:var(--acc);border-color:var(--acc);color:var(--panel);font-weight:600}
+.btn:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.note{background:var(--acc-bg);color:var(--ink);border-radius:8px;padding:8px 12px;font-size:14px}
+.prog{height:5px;background:var(--soft);border-radius:9px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:999px;font:600 12px/1.6 var(--display);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.Uptrend,.Bullish{background:var(--bull-bg);color:var(--bull)} .Downtrend,.Bearish{background:var(--bear-bg);color:var(--bear)} .Range,.Undefined{background:var(--rng-bg);color:var(--rng)}
+.up{color:var(--bull)} .dn{color:var(--bear)} .rg{color:var(--rng)}
+.flag{background:var(--rng-bg);color:var(--rng)}
+/* summary matrix */
+.matrix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mcell{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+.bar{display:flex;height:8px;border-radius:9px;overflow:hidden;background:var(--soft)}
+.bar span:nth-child(1){background:var(--bull)}.bar span:nth-child(2){background:var(--rng)}.bar span:nth-child(3){background:var(--bear)}
+.mrow{display:flex;gap:10px;flex-wrap:wrap;font-size:13px}
+/* filters */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:3px 11px;border-radius:999px;cursor:pointer;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+/* board */
+.board{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:110px repeat(3,minmax(0,1fr)) minmax(0,1.1fr);gap:0;border-top:1px solid var(--line);cursor:pointer}
+.row:first-child{border-top:0}
+.row:hover{background:var(--soft)}
+.row.head{cursor:default;background:var(--soft);font:600 12px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.row>div{padding:9px 12px;min-width:0}
+.coin b{font-family:var(--display);font-size:17px;font-weight:700;display:block}
+.tfc{display:grid;gap:3px;border-left:1px solid var(--line)}
+.tfc .lab{display:none}
+.trig{font-size:12.5px;color:var(--muted)}
+.trig .num{color:var(--ink)}
+.sr{border-left:1px solid var(--line);font-size:12.5px;display:grid;gap:2px}
+@media (max-width:820px){
+  .matrix{grid-template-columns:minmax(0,1fr)}
+  .row.head{display:none}
+  .row{grid-template-columns:repeat(3,minmax(0,1fr));padding:4px 0}
+  .row .coin{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;padding-bottom:2px}
+  .row .coin b{display:inline}
+  .tfc{border-left:0;border-top:0}.tfc+.tfc{border-left:1px solid var(--line)}
+  .tfc .lab{display:block;font:600 11px var(--display);letter-spacing:.08em;color:var(--muted)}
+  .sr{grid-column:1/-1;border-left:0;border-top:1px dashed var(--line)}
+}
+/* detail */
+.back{justify-self:start}
+.dhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline}
+.dhead .px{font:500 24px var(--mono)}
+.tfgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.tfgrid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px;align-content:start}
+.card .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tfname{font:700 22px var(--display)}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.trigger{border-radius:8px;padding:8px 10px;font-size:14px;background:var(--soft)}
+.trigger.bear{background:var(--bear-bg)} .trigger.bull{background:var(--bull-bg)}
+.trigger b{font-family:var(--display);letter-spacing:.03em}
+.pend{font-weight:600;color:var(--rng)}
+.zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.zones{grid-template-columns:minmax(0,1fr)}}
+.z{border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:grid;gap:4px}
+.z .zt{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.z .rng{font:500 15px var(--mono)}
+.z.S .rng{color:var(--bull)} .z.R .rng{color:var(--bear)}
+.tag{display:inline-block;font:600 11px var(--display);letter-spacing:.05em;padding:0 6px;border-radius:4px;background:var(--soft);color:var(--muted);margin-right:3px}
+.tag.str{background:var(--acc-bg);color:var(--acc)}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+details ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.log{display:grid;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.log div{display:grid;grid-template-columns:120px 70px 44px minmax(0,1fr);gap:10px;padding:7px 12px;border-top:1px solid var(--line);font-size:13.5px}
+.log div:first-child{border-top:0}
+@media (max-width:620px){.log div{grid-template-columns:auto auto auto;}.log div span:last-child{grid-column:1/-1}}
+.empty{padding:14px;color:var(--muted)}
+footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
+@media (prefers-reduced-motion:reduce){.prog i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Structure Shift Board</h1>
+      <div class="muted small" id="meta">Loading the latest snapshot…</div>
+    </div>
+    <div class="btns"><button class="btn main" id="refresh" type="button" hidden>Refresh from TradingView</button></div>
+  </header>
+  <div id="progWrap" hidden><div class="prog"><i id="progBar"></i></div><div class="muted small" id="progText"></div></div>
+  <div class="note" id="note" hidden></div>
+  <main id="main" class="wrap" aria-live="polite"></main>
+  <footer>
+    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (4H: 5-bar pivots, 1D: 3-bar, 1W: 2-bar). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree.</div>
+    <div><b>Support and resistance</b> are clusters where several independent levels overlap: fib retracements (0.382 to 0.786) and extensions of the active leg on each timeframe, the 1-year range fib, unfilled fair value gaps, recent swing highs and lows, structure levels and the 1D/1W EMA200 and 1W EMA50. Strong means 3 or more methods across timeframes, or a fib and an FVG together. Weak clusters are hidden.</div>
+    <div><b>Refresh.</b> A scheduled task rebuilds everything daily at 11:59 am Sydney from your Google Drive 4H and 1D sheets, used even when a sheet is a candle or two behind (flagged in the summary). TradingView fills in only when a sheet is missing or fails, and always supplies the market gauges except ETHBTC and logs every change. The button pulls live TradingView bars for an instant update, including the forming candle, so it can show a shift that is pending a close. Analysis only, not financial advice.</div>
+  </footer>
+</div>
+
+<script src="ms.js"></script>
+<script>
+(function(){
+const ORDER=['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','LTC','XLM','TRX','SHIB','SUI','NEAR','ICP','AAVE','UNI','ENA','TAO','RENDER','FET','ONDO','JUP','RAY','PEPE','WIF','ARB','LDO','INJ','WLD','ZEC','PUMP','ASTER','GRAM','HYPE','VVV','LIT','LEO','XMR'];
+const SYMS={HYPE:'BYBIT:HYPEUSDT',GRAM:'BYBIT:GRAMUSDT',VVV:'BYBIT:VVVUSDT',LIT:'BYBIT:LITUSDT',LEO:'OKX:LEOUSDT',XMR:'KUCOIN:XMRUSDT'};
+const tvSym=s=>SYMS[s]||('BINANCE:'+s+'USDT');
+const TFS=['4H','1D','1W'];
+const GAUGES={'TOTAL2ES':['CRYPTOCAP:TOTAL2ES',1e-9],'TOTAL3ES':['CRYPTOCAP:TOTAL3ES',1e-9],'OTHERS':['CRYPTOCAP:OTHERS',1e-9],'TOTAL':['CRYPTOCAP:TOTAL',1e-9],'TOTALES':['CRYPTOCAP:TOTALES',1e-9],'BTCCAP':['CRYPTOCAP:BTC',1e-9],'BTC.D':['CRYPTOCAP:BTC.D',1],'USDT.D+USDC.D':['CRYPTOCAP:USDT.D',1,'CRYPTOCAP:USDC.D'],'ETHBTC':['BINANCE:ETHBTC',1],'STABLE.C':['CRYPTOCAP:STABLE.C',1e-9],'MEME.C':['CRYPTOCAP:MEME.C',1e-9]};
+const GORDER=Object.keys(GAUGES);
+const gSym=s=>GAUGES[s]?GAUGES[s][0]:tvSym(s);
+const unit=s=>GAUGES[s]?(GAUGES[s][1]!==1?'B':/\.D$/.test(s)?'%':''):'';
+function sumBars(A,C){const m=new Map();C.t.forEach((t,i)=>m.set(t,i));const o={t:[],o:[],h:[],l:[],c:[],v:[]};A.t.forEach((t,i)=>{const j=m.get(t);if(j==null)return;o.t.push(t);for(const x of 'ohlc')o[x].push(A[x][i]+C[x][j]);o.v.push(0)});return o}
+async function gbars(s,iv,n){const g=GAUGES[s];if(g&&g[2]){const a=await bars(g[0],iv,n);await sleep(1200);return sumBars(a,await bars(g[2],iv,n))}return bars(gSym(s),iv,n)}
+function scaleBars(B,k){if(k===1)return B;const o={t:B.t,v:B.v};for(const x of 'ohlc')o[x]=B[x].map(y=>y*k);return o}
+let COINS={},LOG=[],META={},FILTER='all',DB=null,CANEDIT=false,MCP=null,BUSY=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f=x=>MS.fmt(x);
+const pct=x=>x==null||!isFinite(x)?'-':(x>0?'+':'')+x.toFixed(1)+'%';
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function when(t,withTime){if(!t)return '-';const d=new Date(t*1000);
+  const s=d.toLocaleDateString('en-AU',{day:'2-digit',month:'short',timeZone:'Australia/Sydney'});
+  return withTime?s+' '+d.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Australia/Sydney'}):s}
+const arrow=s=>s==='Bullish'?'▲':s==='Bearish'?'▼':'■';
+const cls=s=>s==='Bullish'||s==='Uptrend'?'up':s==='Bearish'||s==='Downtrend'?'dn':'rg';
+
+/* ---------- data ---------- */
+function merge(c){if(!c||!c.sym)return;const o=COINS[c.sym];if(!o||(c.built||0)>=(o.built||0))COINS[c.sym]=c}
+async function loadBaseline(){try{const r=await fetch('data.json');const s=await r.json();Object.values(s.coins||{}).forEach(merge);META=s.meta||{};LOG=(s.events||[]).slice();}catch(e){}}
+async function loadDb(){
+  try{if(!window.claude||!window.claude.use)return;DB=await window.claude.use('db');if(!DB)return;
+    const snap=await DB.collection('ms').get();
+    snap.docs.forEach(d=>{const v=d.data();if(!v)return;if(d.id==='meta'){if((v.built||0)>=(META.built||0))META=v}else if(v.json){try{merge(JSON.parse(v.json))}catch(e){}}});
+    const lg=await DB.collection('mslog').orderBy('t','desc').limit(150).get();
+    const seen=new Set(LOG.map(e=>e.id));lg.docs.forEach(d=>{const v=d.data();if(v&&!seen.has(d.id)){v.id=d.id;LOG.push(v)}});
+    render();
+  }catch(e){}
+}
+async function initActions(){
+  try{const u=await window.claude.use('user');CANEDIT=u?await u.canEdit():false}catch(e){}
+  try{MCP=await window.claude.use('mcp')}catch(e){MCP=null}
+  if(MCP)$('refresh').hidden=false;
+}
+
+/* ---------- views ---------- */
+function counts(tf){const c={Uptrend:0,Range:0,Downtrend:0};ORDER.forEach(s=>{const x=COINS[s]&&COINS[s].tf[tf];if(x)c[x.trend]=(c[x.trend]||0)+1});return c}
+function nearZone(c,role){const z=c.zones&&c.zones[role]&&c.zones[role][0];return z?`<span class="num ${role==='S'?'up':'dn'}">${f(z.lo)}–${f(z.hi)}</span> <span class="muted">${pct(z.dist)}${z.strength==='Strong'?' · strong':''}</span>`:'<span class="muted">none</span>'}
+function tfCell(c,tf){const x=c.tf[tf];if(!x)return `<div class="tfc"><span class="lab">${tf}</span><span class="muted small">no data</span></div>`;
+  const t=x.shift?`<span class="${x.shift.to==='Bullish'?'up':'dn'}">${x.shift.side==='above'?'▲':'▼'}</span> flips ${x.shift.side} <span class="num">${f(x.shift.level)}</span> ${pct(x.dist_shift)}`:'no flip level yet';
+  return `<div class="tfc"><span class="lab">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="${cls(x.structure)}" title="${x.structure} structure">${arrow(x.structure)}</span>${x.pending?' <span class="pill flag" title="Price is beyond the flip level; needs a close">pending</span>':''}</span><span class="trig">${t}</span></div>`}
+const FILTERS=[['all','All'],['pend','Shift pending'],['near','Flip within 3%'],['aup','All TFs up'],['adn','All TFs down'],['mixed','Mixed']];
+function passes(c){if(FILTER==='all')return true;
+  if(FILTER==='pend')return TFS.some(t=>c.tf[t]&&c.tf[t].pending);
+  if(FILTER==='near')return TFS.some(t=>c.tf[t]&&c.tf[t].dist_shift!=null&&Math.abs(c.tf[t].dist_shift)<=3);
+  if(FILTER==='aup')return c.align==='All up';if(FILTER==='adn')return c.align==='All down';return c.align==='Mixed'}
+function renderOverview(){
+  const m=TFS.map(tf=>{const k=counts(tf),n=k.Uptrend+k.Range+k.Downtrend||1;
+    return `<div class="mcell"><h3>${tf} trend</h3><div class="bar"><span style="width:${k.Uptrend/n*100}%"></span><span style="width:${k.Range/n*100}%"></span><span style="width:${k.Downtrend/n*100}%"></span></div>
+    <div class="mrow"><span class="up">▲ ${k.Uptrend} up</span><span class="rg">■ ${k.Range} range</span><span class="dn">▼ ${k.Downtrend} down</span></div></div>`}).join('');
+  const chips=FILTERS.map(([k,l])=>`<button class="chip" type="button" data-filter="${k}" aria-pressed="${FILTER===k}">${l}</button>`).join('');
+  const grow=GORDER.filter(s=>COINS[s]).map(s=>{const c=COINS[s];
+    return `<div class="row" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}${unit(s)}</span></div>${TFS.map(t=>tfCell(c,t)).join('')}
+    <div class="sr"><span>R ${nearZone(c,'R')}</span><span>S ${nearZone(c,'S')}</span></div></div>`}).join('');
+  const rows=ORDER.filter(s=>COINS[s]&&passes(COINS[s])).map(s=>{const c=COINS[s];
+    return `<div class="row" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}</span></div>${TFS.map(t=>tfCell(c,t)).join('')}
+    <div class="sr"><span>R ${nearZone(c,'R')}</span><span>S ${nearZone(c,'S')}</span></div></div>`}).join('')||'<div class="empty">No coins match this filter.</div>';
+  return `<section class="matrix">${m}</section><div class="chips" role="group" aria-label="Filter coins">${chips}</div>
+  ${grow?`<section class="wrap" style="gap:8px"><h2>Market gauges</h2><div class="muted small">Market caps in USD billions, dominance in %. These lead the alt coins below.</div><section class="board"><div class="row head"><div>Gauge</div><div>4H</div><div>1D</div><div>1W</div><div>Nearest strong S / R</div></div>${grow}</section></section>`:''}
+  <h2>Coins</h2>
+  <section class="board"><div class="row head"><div>Coin</div><div>4H</div><div>1D</div><div>1W</div><div>Nearest strong S / R</div></div>${rows}</section>
+  <section class="wrap" style="gap:8px"><h2>Status changes</h2>${logHtml(LOG)}</section>`}
+function logHtml(list){const L=list.slice().sort((a,b)=>b.t-a.t).slice(0,60);
+  if(!L.length)return '<div class="log"><div class="empty" style="display:block">No changes recorded yet. Each daily refresh and each button refresh compares against the previous snapshot and lists structure flips, BOS continuations, trend changes and pending shifts here.</div></div>';
+  return '<div class="log">'+L.map(e=>`<div><span class="muted num">${when(e.t,true)}</span><b>${esc(e.sym)}</b><span>${esc(e.tf)}</span><span>${e.type==='structure'?`<span class="${cls(e.to)}">Structure ${esc(e.from)} → ${esc(e.to)}</span>`:e.type==='trend'?`Trend ${esc(e.from)} → <span class="${cls(e.to)}">${esc(e.to)}</span>`:e.type==='pending'?`<span class="rg">Shift to ${esc(e.to)} pending</span>`:`<span class="${cls(e.to)}">BOS</span>`} <span class="muted">${esc(e.note||'')}</span></span></div>`).join('')+'</div>'}
+function tfCard(c,tf){const x=c.tf[tf];if(!x)return `<div class="card"><div class="tfname">${tf}</div><div class="muted">Not enough history.</div></div>`;
+  const ev=x.last_event;const evTxt=ev?`${ev.kind} ${ev.dir>0?'up':'down'} on close ${ev.dir>0?'above':'below'} <span class="num">${f(ev.level)}</span> · ${when(ev.t)}`:'none yet';
+  const sh=x.shift?`<div class="trigger ${x.shift.to==='Bullish'?'bull':'bear'}"><b>FLIP TO ${x.shift.to.toUpperCase()}</b> on a ${tf} close ${x.shift.side} <span class="num">${f(x.shift.level)}</span> (${pct(x.dist_shift)})${x.pending?'<div class="pend">Price is already past this level. Waiting for the '+tf+' close to confirm.</div>':''}</div>`:'';
+  const ct=x.cont?`<div class="trigger"><b>CONTINUATION (BOS)</b> on a ${tf} close ${x.cont.side} <span class="num">${f(x.cont.level)}</span> (${pct(x.dist_cont)})${x.cont.confirmed?'':' <span class="muted">· leg extreme, no confirmed swing yet</span>'}${x.cont_pending?'<div class="pend">Price is past this level. Waiting for the close.</div>':''}</div>`:'';
+  const mi=x.minor?`<div class="small muted">Early warning: a ${tf} close ${x.minor.side} the internal swing at <span class="num">${f(x.minor.level)}</span> (${pct((x.minor.level/c.price-1)*100)}) breaks the latest leg before the full flip.</div>`:'';
+  return `<div class="card"><div class="top"><span class="tfname">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="pill ${x.structure}">${arrow(x.structure)} ${x.structure}</span></span></div>
+   <dl class="kv"><dt>Why</dt><dd>${esc(x.why)}</dd><dt>Last event</dt><dd>${evTxt}</dd><dt>Swing highs</dt><dd class="num">${f(x.swings.h[0])} → ${f(x.swings.h[1])}</dd><dt>Swing lows</dt><dd class="num">${f(x.swings.l[0])} → ${f(x.swings.l[1])}</dd><dt>Last close</dt><dd><span class="num">${f(x.close)}</span> <span class="muted small">bar ${when(x.t,true)}</span></dd></dl>
+   ${sh}${ct}${mi}</div>`}
+function zoneHtml(z){return `<div class="z ${z.role}"><div class="zt"><span class="rng">${f(z.lo)} – ${f(z.hi)}</span><span class="small">${pct(z.dist)}</span></div>
+  <div>${z.strength==='Strong'?'<span class="tag str">STRONG</span>':'<span class="tag">MODERATE</span>'}${z.methods.map(m=>`<span class="tag">${m}</span>`).join('')}${z.tfs.map(t=>`<span class="tag">${t}</span>`).join('')}<span class="muted small">score ${z.score}</span></div>
+  <details><summary>${z.labels.length} confluences</summary><ul>${z.labels.map(l=>`<li>${esc(l)}</li>`).join('')}</ul></details></div>`}
+function renderCoin(s){const c=COINS[s];if(!c)return renderOverview();
+  const Z=c.zones||{S:[],R:[],IN:[]};
+  return `<button class="btn back" type="button" data-go="overview">← All coins</button>
+  <div class="dhead"><h1>${s}</h1><span class="px">${f(c.price)}${unit(s)}</span><span class="pill ${c.align==='All up'?'Uptrend':c.align==='All down'?'Downtrend':'Range'}">${c.align}</span>
+   <span class="muted small">${c.desc?esc(c.desc)+' · ':''}${esc(c.symbol||gSym(s))} · ${esc(c.source||'')} · built ${when(c.built,true)} Sydney</span></div>
+  <section class="tfgrid">${TFS.map(t=>tfCard(c,t)).join('')}</section>
+  ${Z.IN&&Z.IN.length?`<div class="note">Price is inside ${Z.IN.length===1?'a':Z.IN.length} confluence zone${Z.IN.length>1?'s':''}: ${Z.IN.map(z=>f(z.lo)+' – '+f(z.hi)+' ('+z.strength.toLowerCase()+', '+z.methods.join('+')+')').join('; ')}.</div>`:''}
+  <section class="zones"><div class="wrap" style="gap:8px"><h2>Resistance</h2>${Z.R.length?Z.R.map(zoneHtml).join(''):'<div class="muted">No strong or moderate resistance above.</div>'}</div>
+   <div class="wrap" style="gap:8px"><h2>Support</h2>${Z.S.length?Z.S.map(zoneHtml).join(''):'<div class="muted">No strong or moderate support below.</div>'}</div></section>
+  <section class="wrap" style="gap:8px"><h2>${s} status changes</h2>${logHtml(LOG.filter(e=>e.sym===s))}</section>
+  <a href="https://www.tradingview.com/chart/?symbol=${encodeURIComponent(c.symbol||gSym(s))}" target="_blank" rel="noopener">Open ${s} on TradingView</a>`}
+function render(){
+  const built=Math.max(0,...Object.values(COINS).map(c=>c.built||0));const nC=ORDER.filter(s=>COINS[s]).length,nG=GORDER.filter(s=>COINS[s]).length;
+  const src={};Object.values(COINS).forEach(c=>{src[c.source]=(src[c.source]||0)+1});
+  $('meta').textContent=Object.keys(COINS).length?`${nC} coins + ${nG} gauges · updated ${when(built,true)} Sydney · `+Object.entries(src).map(([k,v])=>v+' from '+k).join(', '):'No snapshot yet.';
+  const h=decodeURIComponent((location.hash||'').slice(1));
+  $('main').innerHTML=h&&COINS[h]?renderCoin(h):renderOverview();
+}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){const k=g.getAttribute('data-go');location.hash=k==='overview'?'':k;if(k==='overview')render();window.scrollTo(0,0);return}
+  const fb=e.target.closest('[data-filter]');if(fb){FILTER=fb.getAttribute('data-filter');render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest&&e.target.closest('.row[data-go]');if(g)g.click()}});
+window.addEventListener('hashchange',render);
+
+/* ---------- TradingView refresh ---------- */
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ERR={needs_reauth:'Reconnect TradingView in claude.ai Settings, Connectors.',server_not_connected:'Add the TradingView connector in claude.ai Settings, Connectors.',not_in_manifest:'TradingView access was not allowed for this page.',not_granted:'TradingView access was not allowed for this page.'};
+let SERVER=null;
+async function bars(sym,interval,count){let last;for(const name of (SERVER?[SERVER]:['Trading View','Trading_View'])){
+  try{const r=await MCP.callTool(name,'mcp-tv-get-ohlcv',{symbol:sym,interval,count,format:'columns'},{cache:false});SERVER=name;
+   let p=r.payload;if(typeof p==='string'){try{p=JSON.parse(p)}catch(e){}}
+   if(!p||p.success===false||!p.bars||!Array.isArray(p.bars.t)||p.bars.t.length<30)throw {code:'tool_error',message:(p&&(p.error||p.message))||'no bars'};
+   return p.bars}catch(e){last=e;if(e&&(e.code==='server_not_connected'||e.code==='server_not_found'))continue;break}}throw last}
+function prog(i,n,txt){$('progWrap').hidden=false;$('progBar').style.width=(i/n*100)+'%';$('progText').textContent=txt}
+async function save(c,evs){if(!DB||!CANEDIT)return false;
+  try{await DB.doc('ms/c_'+c.sym).set({json:JSON.stringify(c),built:c.built,sym:c.sym});
+   for(const e of evs){const id=('e_'+e.t+'_'+e.sym+'_'+e.tf+'_'+e.type).replace(/[^A-Za-z0-9_\-]/g,'_');e.id=id;await DB.doc('mslog/'+id).set(e)}return true}catch(e){return false}}
+$('refresh').addEventListener('click',async()=>{if(BUSY)return;BUSY=true;const b=$('refresh');b.disabled=true;$('note').hidden=true;
+  const now=Math.floor(Date.now()/1000);let ok=0,failed=[],saved=0,evN=0,stop=null;
+  const ALL=GORDER.concat(ORDER);
+  for(let i=0;i<ALL.length;i++){const s=ALL[i],k=GAUGES[s]?GAUGES[s][1]:1;prog(i,ALL.length,`Pulling ${s} (${i+1} of ${ALL.length})…`);
+    try{const b4=scaleBars(await gbars(s,'4h',1000),k);await sleep(1200);const bd=scaleBars(await gbars(s,'1D',1200),k);
+      const r=MS.analyze(s,b4,bd,now,{symbol:gSym(s),source:'TradingView'});if(GAUGES[s]){r.kind='gauge';r.desc=COINS[s]&&COINS[s].desc||''}const evs=MS.diff(COINS[s],r,now);
+      COINS[s]=r;evs.forEach(e=>LOG.push(e));evN+=evs.length;ok++;if(await save(r,evs))saved++;render()}
+    catch(e){failed.push(s);if(e&&ERR[e.code]){stop=ERR[e.code];break}if(/quota|rate|too many/i.test(String(e&&e.message))){stop='TradingView paused the requests. Wait a few minutes and press the button again.';break}}
+    await sleep(1200)}
+  if(DB&&CANEDIT&&ok){try{await DB.doc('ms/meta').set({built:now,source:'TradingView button',n:ok,missing:failed})}catch(e){}}
+  prog(1,1,'');$('progWrap').hidden=true;b.disabled=false;BUSY=false;
+  $('note').hidden=false;$('note').textContent=(stop?stop+' ':'')+`Refreshed ${ok} coins and gauges from TradingView, ${evN} status change${evN===1?'':'s'}.`+(failed.length?` Failed: ${failed.join(', ')}.`:'')+(CANEDIT?(saved?' Saved for everyone who opens the board.':' Could not save to the board.'):' View-only: this refresh shows here but is not saved.');
+  render()});
+
+(async function(){await loadBaseline();render();loadDb();initActions()})();
+})();
+</script>
+
+</body></html>

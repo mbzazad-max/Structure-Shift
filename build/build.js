@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+/* Structure Shift board build (runs on GitHub, .github/workflows/build.yml).
+   usage: node build/build.js <market-data checkout> [--force]
+   Reads closed candles from Market-Data (data/<source>/<SYMBOL>_<TF>.csv, time = candle open, unix s UTC),
+   runs the board's own engine (public/ms.js) for every row in config/board.json and writes
+   public/data.json (rows + status-change log) and public/freshness.json.
+   - Coins: Binance 1H, 4H and 1D. 1W is built from 1D.
+   - Gauges: TradingView 1H and 4H (1D and 1W resampled from 4H); USDT.D+USDC.D is the candle-by-candle sum; ETHBTC from Binance.
+   - Skips the build when no input series changed since the last build (unless --force).
+   - A row that cannot be built keeps its last good version and is listed in freshness.json "kept".
+   BUILD_NOW=<unix s> overrides the clock (tests). */
+'use strict';
+const fs = require('fs'), path = require('path');
+const ROOT = path.resolve(__dirname, '..');
+const MS = require(path.join(ROOT, 'public', 'ms.js'));
+const MD = path.resolve(process.argv[2] || 'md');
+const FORCE = process.argv.includes('--force');
+const NOW = +process.env.BUILD_NOW || Math.floor(Date.now() / 1000);
+const CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'board.json'), 'utf8'));
+const OUT = path.join(ROOT, 'public', 'data.json'), FRESH = path.join(ROOT, 'public', 'freshness.json');
+const PERIOD = { '1H': 3600, '4H': 14400, '1D': 86400 };
+const LOG_MAX = 500;
+
+const readJSON = (p, d) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return d; } };
+const man = (readJSON(path.join(MD, 'manifest.json'), {}).series) || {};
+
+// Market-Data CSV -> bars {t,o,h,l,c,v}, oldest first (closed candles only: the importer keeps no forming candle)
+function readCsv(sid) {
+  const [source, symbol, tf] = sid.split('/');
+  const f = path.join(MD, 'data', source, `${symbol}_${tf}.csv`);
+  if (!fs.existsSync(f)) return null;
+  const B = { t: [], o: [], h: [], l: [], c: [], v: [] };
+  const lines = fs.readFileSync(f, 'utf8').split('\n');
+  for (let i = 1; i < lines.length; i++) {
+    const r = lines[i].split(',');
+    if (r.length < 6) continue;
+    B.t.push(+r[0]); B.o.push(+r[1]); B.h.push(+r[2]); B.l.push(+r[3]); B.c.push(+r[4]); B.v.push(+r[5] || 0);
+  }
+  return B.t.length ? B : null;
+}
+function sumBars(A, C) {
+  const m = new Map(); C.t.forEach((t, i) => m.set(t, i));
+  const o = { t: [], o: [], h: [], l: [], c: [], v: [] };
+  A.t.forEach((t, i) => { const j = m.get(t); if (j == null) return; o.t.push(t); for (const k of 'ohlc') o[k].push(A[k][i] + C[k][j]); o.v.push(0); });
+  return o;
+}
+function scale(B, k) { if (!B || k === 1) return B; const o = { t: B.t, v: B.v }; for (const x of 'ohlc') o[x] = B[x].map(y => y * k); return o; }
+function load(prefixes, tf) {
+  const B = (Array.isArray(prefixes) ? prefixes : [prefixes]).map(p => readCsv(p + '/' + tf));
+  if (B.some(b => !b)) return null;
+  return B.length > 1 ? sumBars(B[0], B[1]) : B[0];
+}
+
+// ---------- inputs fingerprint (skip when nothing changed) ----------
+const rows = CFG.coins.map(c => ({ ...c, kind: 'coin' })).concat(CFG.gauges.map(g => ({ ...g, kind: 'gauge' })));
+const used = [];
+for (const r of rows) for (const p of [].concat(r.series)) for (const tf of r.tfs) used.push(p + '/' + tf);
+const finger = used.map(sid => sid + ':' + ((man[sid] && man[sid].last_open) || 0)).join('|');
+const prev = readJSON(OUT, null);
+if (!FORCE && prev && prev.meta && prev.meta.inputs === finger) {
+  console.log('Inputs unchanged since the last build; nothing to do (use --force to rebuild).');
+  process.exit(0);
+}
+
+// ---------- build ----------
+const coins = {}, kept = [], sources = {};
+let nOk = 0;
+let events = [];
+for (const r of rows) {
+  const keepOld = why => { kept.push({ sym: r.sym, why }); if (prev && prev.coins && prev.coins[r.sym]) coins[r.sym] = prev.coins[r.sym]; };
+  try {
+    const sc = r.scale || 1;
+    const B1 = scale(load(r.series, '1H'), sc), B4 = scale(load(r.series, '4H'), sc);
+    const BD = r.kind === 'coin' ? load(r.series, '1D') : null;
+    if (!B4) { keepOld('no 4H candles in Market-Data'); continue; }
+    const res = MS.analyze(r.sym, B4, BD || MS.toDay(B4), NOW, {
+      B1, symbol: r.tv, source: r.kind === 'coin' ? 'Binance' : (String(r.series).startsWith('binance') ? 'Binance' : 'TradingView')
+    });
+    if (r.kind === 'gauge') { res.kind = 'gauge'; res.desc = r.desc; }
+    if (!res.tf['4H']) { keepOld('fewer than 30 closed 4H candles'); continue; }
+    if (prev && prev.coins && prev.coins[r.sym]) events = events.concat(MS.diff(prev.coins[r.sym], res, NOW));
+    coins[r.sym] = res; nOk++;
+    sources[r.sym] = { '1H': !!B1, '4H': true, '1D': r.kind === 'coin' ? (BD ? 'file' : 'from 4H') : 'from 4H' };
+  } catch (e) { keepOld('engine error: ' + e.message); }
+}
+for (const e of events) e.id = ('e_' + e.t + '_' + e.sym + '_' + e.tf + '_' + e.type).replace(/[^A-Za-z0-9_\-]/g, '_');
+const log = events.concat((prev && prev.events) || []).sort((a, b) => b.t - a.t).slice(0, LOG_MAX);
+if (!nOk) { console.error('::error::No row could be built; the last good board is kept.'); process.exit(1); }
+
+const iso = new Date(NOW * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+const out = {
+  meta: { built: NOW, generated: iso, n: Object.keys(coins).length, order: CFG.coins.map(c => c.sym), gauges: CFG.gauges.map(g => g.sym),
+          removed: CFG.removed || [], kept, inputs: finger, source: 'GitHub build from Market-Data (Binance coins, TradingView gauges)' },
+  coins, events: log
+};
+fs.writeFileSync(OUT, JSON.stringify(out));
+
+// ---------- freshness ----------
+const series = [...new Set(used)].map(sid => {
+  const m = man[sid] || {}, [source, symbol, tf] = sid.split('/');
+  return { id: sid, source, symbol: m.symbol || symbol, tf, period_s: PERIOD[tf], last_close: m.last_close || null, fetched_at: m.fetched_at || null };
+});
+fs.writeFileSync(FRESH, JSON.stringify({
+  generated: iso, checked_at: NOW, series, kept,
+  last_result: `Built ${nOk} of ${rows.length} rows, ${events.length} status change${events.length === 1 ? '' : 's'}.`
+}, null, 1));
+console.log(`Built ${nOk} of ${rows.length} rows (${kept.length} kept from the last good board), ${events.length} status changes, log ${log.length}.`);
+if (kept.length) console.log('Kept: ' + kept.map(k => k.sym + ' (' + k.why + ')').join('; '));
