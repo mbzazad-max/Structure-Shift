@@ -57,7 +57,7 @@ const used = [];
 for (const r of rows) for (const p of [].concat(r.series)) for (const tf of r.tfs) used.push(p + '/' + tf);
 const finger = used.map(sid => sid + ':' + ((man[sid] && man[sid].last_open) || 0)).join('|');
 const prev = readJSON(OUT, null);
-if (!FORCE && prev && prev.meta && prev.meta.inputs === finger) {
+if (!FORCE && prev && prev.meta && prev.meta.inputs === finger && (readJSON(FRESH, {}).series || []).every(x => x.built_from !== undefined)) {
   console.log('Inputs unchanged since the last build; nothing to do (use --force to rebuild).');
   process.exit(0);
 }
@@ -96,10 +96,15 @@ const out = {
 fs.writeFileSync(OUT, JSON.stringify(out));
 
 // ---------- freshness ----------
+// built_from / rows = the newest candle and row count this build actually read from Market-Data's CSV
+// (the Data check compares them with manifest.json last_open / rows).
 const series = [...new Set(used)].map(sid => {
-  const m = man[sid] || {}, [source, symbol, tf] = sid.split('/');
-  return { id: sid, source, symbol: m.symbol || symbol, tf, period_s: PERIOD[tf], last_close: m.last_close || null, fetched_at: m.fetched_at || null };
+  const m = man[sid] || {}, [source, symbol, tf] = sid.split('/'), B = readCsv(sid);
+  const built = B ? B.t[B.t.length - 1] : null;
+  return { id: sid, series: sid, source, symbol: m.symbol || symbol, tf, period_s: PERIOD[tf],
+           built_from: built, last_open: built, rows: B ? B.t.length : 0, last_close: built != null ? built + PERIOD[tf] : null, fetched_at: m.fetched_at || null };
 });
+for (const k of kept) k.id = k.sym;
 fs.writeFileSync(FRESH, JSON.stringify({
   generated: iso, checked_at: NOW, series, kept,
   last_result: `Built ${nOk} of ${rows.length} rows, ${events.length} status change${events.length === 1 ? '' : 's'}.`
