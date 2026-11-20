@@ -469,6 +469,19 @@
    ]
   },
   {
+   "sym": "USDT.D",
+   "tv": "CRYPTOCAP:USDT.D",
+   "series": [
+    "tv/CRYPTOCAP_USDT.D"
+   ],
+   "scale": 1,
+   "desc": "Tether dominance, USDT.D alone, %",
+   "tfs": [
+    "1H",
+    "4H"
+   ]
+  },
+  {
    "sym": "ETHBTC",
    "tv": "BINANCE:ETHBTC",
    "series": [

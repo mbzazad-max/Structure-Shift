@@ -5,7 +5,7 @@
    runs the board's own engine (public/ms.js) for every row in config/board.json and writes
    public/data.json (rows + status-change log) and public/freshness.json.
    - Coins: Binance 1H, 4H and 1D. 1W is built from 1D.
-   - Gauges: TradingView 1H and 4H (1D and 1W resampled from 4H); USDT.D+USDC.D is the candle-by-candle sum; ETHBTC from Binance.
+   - Gauges: TradingView 1H and 4H (1D and 1W resampled from 4H); USDT.D+USDC.D is the candle-by-candle sum, USDT.D alone is its own row; ETHBTC from Binance.
    - Skips the build when no input series changed since the last build (unless --force).
    - A row that cannot be built keeps its last good version and is listed in freshness.json "kept".
    BUILD_NOW=<unix s> overrides the clock (tests). */
