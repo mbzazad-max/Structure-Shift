@@ -20,6 +20,7 @@ on:
     paths: ['public/**', 'worker/**', 'build/**', 'config/**', 'wrangler.jsonc', 'reference/**']
 permissions:
   contents: write
+  issues: write
 concurrency:
   group: structure-shift
   cancel-in-progress: false
@@ -59,6 +60,13 @@ jobs:
           git commit -q -m "Board build $(node -p "require('./public/freshness.json').generated")"
           for i in 1 2 3 4 5; do git push -q origin HEAD:main && exit 0; git pull -q --rebase origin main; sleep $((i*2)); done
           echo "::error::Could not save the board."; exit 1
+      - name: Email structure flips (GitHub issue mentioning the owner)
+        if: hashFiles('alerts.json') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "$(node -p "require('./alerts.json').title")" --body "$(node -p "require('./alerts.json').body")" \
+            || echo "::warning::Could not open the alert issue."
       - name: Deploy to Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

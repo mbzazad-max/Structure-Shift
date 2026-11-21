@@ -109,5 +109,22 @@ fs.writeFileSync(FRESH, JSON.stringify({
   generated: iso, checked_at: NOW, series, kept,
   last_result: `Built ${nOk} of ${rows.length} rows, ${events.length} status change${events.length === 1 ? '' : 's'}.`
 }, null, 1));
+// ---------- email alerts (config.alerts): new structure flips on watched rows/timeframes -> alerts.json (not committed) ----------
+{
+  const A = CFG.alerts, AF = path.join(ROOT, 'alerts.json');
+  try { fs.unlinkSync(AF); } catch (e) {}
+  if (A) {
+    const hit = events.filter(e => A.rows.includes(e.sym) && A.tfs.includes(e.tf) && A.types.includes(e.type));
+    if (hit.length) {
+      const name = e => e.sym === 'BTC' ? 'BTCUSDT' : e.sym;
+      const title = 'Structure flip: ' + hit.map(e => `${name(e)} ${e.tf} ${e.to}`).join(', ');
+      const body = [`@${A.mention} structure flipped on the Structure Shift Board (build ${iso}):`, '',
+        ...hit.map(e => `- **${name(e)} ${e.tf}**: ${e.from} → **${e.to}** (${e.note}); last closed ${e.tf} candle ${coins[e.sym] && coins[e.sym].tf[e.tf] ? new Date(coins[e.sym].tf[e.tf].t * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : '-'}`),
+        '', `Board: ${A.board}`, '', '_Watching ' + A.rows.join(', ') + ' on ' + A.tfs.join(', ') + ' (config/board.json alerts). Close this issue any time._'].join('\n');
+      fs.writeFileSync(AF, JSON.stringify({ title: title.length > 200 ? title.slice(0, 197) + '...' : title, body }));
+      console.log('Alert: ' + title);
+    }
+  }
+}
 console.log(`Built ${nOk} of ${rows.length} rows (${kept.length} kept from the last good board), ${events.length} status changes, log ${log.length}.`);
 if (kept.length) console.log('Kept: ' + kept.map(k => k.sym + ' (' + k.why + ')').join('; '));

@@ -527,5 +527,23 @@
   "LIT",
   "LEO",
   "XMR"
- ]
+ ],
+ "alerts": {
+  "_about": "Email on a structure flip (Bullish <-> Bearish) for these rows and timeframes. The build writes alerts.json; the workflow opens a GitHub issue mentioning @mbzazad-max, which GitHub emails. Owner request 21 Nov 2026.",
+  "rows": [
+   "BTC",
+   "USDT.D",
+   "TOTAL2ES"
+  ],
+  "tfs": [
+   "1H",
+   "4H",
+   "1D"
+  ],
+  "types": [
+   "structure"
+  ],
+  "mention": "mbzazad-max",
+  "board": "https://dashboards.mbzazad.workers.dev/structure-shift/"
+ }
 }
