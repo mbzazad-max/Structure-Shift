@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-21 01:12 UTC",
- "checked_at": 1795223523,
+ "generated": "2026-11-21 02:52 UTC",
+ "checked_at": 1795229560,
  "series": [
   {
    "id": "binance/BTCUSDT/1H",
@@ -1720,5 +1720,5 @@
   }
  ],
  "kept": [],
- "last_result": "Built 48 of 48 rows, 24 status changes."
+ "last_result": "Built 48 of 48 rows, 0 status changes."
 }
