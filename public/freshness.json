@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-23 05:23 UTC",
- "checked_at": 1795411420,
+ "generated": "2026-11-23 08:42 UTC",
+ "checked_at": 1795423323,
  "series": [
   {
    "id": "binance/BTCUSDT/1H",
@@ -1413,11 +1413,11 @@
    "symbol": "CRYPTOCAP:TOTAL2ES",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795402800,
-   "last_open": 1795402800,
-   "rows": 2092,
-   "last_close": 1795406400,
-   "fetched_at": 1795406810
+   "built_from": 1795417200,
+   "last_open": 1795417200,
+   "rows": 2096,
+   "last_close": 1795420800,
+   "fetched_at": 1795423237
   },
   {
    "id": "tv/CRYPTOCAP_TOTAL2ES/4H",
@@ -1720,5 +1720,5 @@
   }
  ],
  "kept": [],
- "last_result": "Built 48 of 48 rows, 15 status changes."
+ "last_result": "Built 48 of 48 rows, 1 status change."
 }
