@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-23 21:36 UTC",
- "checked_at": 1795469778,
+ "generated": "2026-11-24 00:03 UTC",
+ "checked_at": 1795478592,
  "series": [
   {
    "id": "binance/BTCUSDT/1H",
@@ -1413,11 +1413,11 @@
    "symbol": "CRYPTOCAP:TOTAL2ES",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469605
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478411
   },
   {
    "id": "tv/CRYPTOCAP_TOTAL2ES/4H",
@@ -1439,11 +1439,11 @@
    "symbol": "CRYPTOCAP:TOTAL3ES",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469614
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478423
   },
   {
    "id": "tv/CRYPTOCAP_TOTAL3ES/4H",
@@ -1465,11 +1465,11 @@
    "symbol": "CRYPTOCAP:OTHERS",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469674
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478485
   },
   {
    "id": "tv/CRYPTOCAP_OTHERS/4H",
@@ -1491,11 +1491,11 @@
    "symbol": "CRYPTOCAP:TOTAL",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469625
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478433
   },
   {
    "id": "tv/CRYPTOCAP_TOTAL/4H",
@@ -1517,11 +1517,11 @@
    "symbol": "CRYPTOCAP:TOTALES",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469635
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478442
   },
   {
    "id": "tv/CRYPTOCAP_TOTALES/4H",
@@ -1543,11 +1543,11 @@
    "symbol": "CRYPTOCAP:BTC",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469684
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478495
   },
   {
    "id": "tv/CRYPTOCAP_BTC/4H",
@@ -1569,11 +1569,11 @@
    "symbol": "CRYPTOCAP:BTC.D",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2013,
-   "last_close": 1795467600,
-   "fetched_at": 1795469664
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2015,
+   "last_close": 1795474800,
+   "fetched_at": 1795478475
   },
   {
    "id": "tv/CRYPTOCAP_BTC.D/4H",
@@ -1595,11 +1595,11 @@
    "symbol": "CRYPTOCAP:USDT.D",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2013,
-   "last_close": 1795467600,
-   "fetched_at": 1795469644
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2015,
+   "last_close": 1795474800,
+   "fetched_at": 1795478452
   },
   {
    "id": "tv/CRYPTOCAP_USDT.D/4H",
@@ -1621,11 +1621,11 @@
    "symbol": "CRYPTOCAP:USDC.D",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2013,
-   "last_close": 1795467600,
-   "fetched_at": 1795469654
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2015,
+   "last_close": 1795474800,
+   "fetched_at": 1795478465
   },
   {
    "id": "tv/CRYPTOCAP_USDC.D/4H",
@@ -1673,11 +1673,11 @@
    "symbol": "CRYPTOCAP:STABLE.C",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469693
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478506
   },
   {
    "id": "tv/CRYPTOCAP_STABLE.C/4H",
@@ -1699,11 +1699,11 @@
    "symbol": "CRYPTOCAP:MEME.C",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795464000,
-   "last_open": 1795464000,
-   "rows": 2109,
-   "last_close": 1795467600,
-   "fetched_at": 1795469703
+   "built_from": 1795471200,
+   "last_open": 1795471200,
+   "rows": 2111,
+   "last_close": 1795474800,
+   "fetched_at": 1795478515
   },
   {
    "id": "tv/CRYPTOCAP_MEME.C/4H",
@@ -1720,5 +1720,5 @@
   }
  ],
  "kept": [],
- "last_result": "Built 48 of 48 rows, 10 status changes."
+ "last_result": "Built 48 of 48 rows, 0 status changes."
 }
