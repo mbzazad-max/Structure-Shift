@@ -58,6 +58,9 @@ button{font:inherit}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:3px 11px;border-radius:999px;cursor:pointer;font-size:13px}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+.chips .sep{width:1px;background:var(--line);margin:2px 6px}.chips .lbl{font-size:13px;color:var(--muted);align-self:center}
+.gap{font-size:11.5px;color:var(--muted);white-space:nowrap;display:block;margin-top:2px}
+@media (max-width:820px){.row .coin .gap{display:inline;margin:0}}
 /* board */
 .board{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .row{display:grid;grid-template-columns:100px repeat(4,minmax(0,1fr)) minmax(0,1.05fr);gap:0;border-top:1px solid var(--line);cursor:pointer}
@@ -130,7 +133,7 @@ footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
   </header>
   <main id="main" class="wrap" aria-live="polite"></main>
   <footer>
-    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H, 2H and 4H: 5-bar pivots, 8H: 4-bar, 12H and 1D: 3-bar, 1W: 2-bar; 2H, 8H and 12H are for coins only). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree.</div>
+    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H, 2H and 4H: 5-bar pivots, 8H: 4-bar, 12H and 1D: 3-bar, 1W: 2-bar; 2H, 8H and 12H are for coins only). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree. <b>Gap</b> (under each coin's price) is how far apart the 4H and 1D flip levels are: small means one level would flip both, big means a 4H flip is only a bounce inside the daily trend.</div>
     <div><b>Support and resistance</b> are clusters where several independent levels overlap: fib retracements (0.382 to 0.786) and extensions of the active leg on 4H, 1D and 1W (1H, 2H, 8H and 12H are structure only), the 1-year range fib, unfilled fair value gaps, recent swing highs and lows, structure levels and the 1D/1W EMA200 and 1W EMA50. Strong means 3 or more methods across timeframes, or a fib and an FVG together. Weak clusters are hidden.</div>
     <div><b>Data.</b> This board reads only from <b>Market-Data</b>, the shared candle store every dashboard uses. Market-Data holds the coins as Binance spot USDT candles (1H, 4H, 1D; topped up every 4 hours, 7 minutes after each 4H close) and the market gauges as TradingView candles (1H, 4H; loaded once a day by the 11:30 am task). ETHBTC is Binance. Here the coins' 2H is built from their 1H candles, 8H and 12H from 4H (only complete candles, UTC-aligned like Binance), 1W from 1D, and the gauges' 1D and 1W from 4H (gauges have no 2H, 8H or 12H). The board rebuilds by itself whenever Market-Data gets new candles and logs every change; Refresh asks for a rebuild now. Only closed candles are used, so a "pending" flag means the last close is already past the flip level of a higher timeframe. Analysis only, not financial advice.</div>
   </footer>
@@ -150,7 +153,7 @@ const GORDER=Object.keys(GAUGES);
 const gSym=s=>GAUGES[s]?GAUGES[s][0]:tvSym(s);
 const unit=s=>GAUGES[s]?(GAUGES[s][1]!==1?'B':/\.D$/.test(s)?'%':''):'';
 function scaleBars(B,k){if(k===1)return B;const o={t:B.t,v:B.v};for(const x of 'ohlc')o[x]=B[x].map(y=>y*k);return o}
-let COINS={},LOG=[],META={},FILTER='all';
+let COINS={},LOG=[],META={},FILTER='all',SORT='board';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const f=x=>MS.fmt(x);
@@ -172,6 +175,10 @@ function nearZone(c,role){const z=c.zones&&c.zones[role]&&c.zones[role][0];retur
 function tfCell(c,tf,compact){const x=c.tf[tf];if(!x)return `<div class="tfc"><span class="lab">${tf}</span><span class="muted small">no data</span></div>`;
   const t=x.shift?`<span class="${x.shift.to==='Bullish'?'up':'dn'}" title="flips ${x.shift.side}">${x.shift.side==='above'?'▲':'▼'}</span>${compact?'':' flips '+x.shift.side} <span class="num">${f(x.shift.level)}</span> ${pct(x.dist_shift)}`:(compact?'no flip yet':'no flip level yet');
   return `<div class="tfc"><span class="lab">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="${cls(x.structure)}" title="${x.structure} structure">${arrow(x.structure)}</span>${x.pending?' <span class="pill flag" title="Price is beyond the flip level; needs a close">pending</span>':''}</span><span class="trig">${t}</span></div>`}
+// Gap 4H->1D: distance between the 4H and 1D flip levels (larger / smaller - 1). Small = one key level flips both; big = a 4H flip is only a bounce inside the daily trend.
+function gap(c){const a=c.tf['4H']&&c.tf['4H'].shift,b=c.tf['1D']&&c.tf['1D'].shift;if(!a||!b||!(a.level>0)||!(b.level>0))return null;return (Math.max(a.level,b.level)/Math.min(a.level,b.level)-1)*100}
+const gapTxt=g=>g==null?'-':(g<10?g.toFixed(1):Math.round(g))+'%';
+const SORTS=[['board','Board order'],['gapup','Gap: small first'],['gapdn','Gap: big first']];
 const FILTERS=[['all','All'],['pend','Shift pending'],['near','Flip within 3%'],['aup','All TFs up'],['adn','All TFs down'],['mixed','Mixed']];
 function passes(c){if(FILTER==='all')return true;
   if(FILTER==='pend')return TFS.some(t=>c.tf[t]&&c.tf[t].pending);
@@ -181,14 +188,18 @@ function renderOverview(){
   const m=TFS.map(tf=>{const k=counts(tf),n=k.Uptrend+k.Range+k.Downtrend||1;
     return `<div class="mcell"><h3>${tf} trend</h3><div class="bar"><span style="width:${k.Uptrend/n*100}%"></span><span style="width:${k.Range/n*100}%"></span><span style="width:${k.Downtrend/n*100}%"></span></div>
     <div class="mrow"><span class="up">▲ ${k.Uptrend} up</span><span class="rg">■ ${k.Range} range</span><span class="dn">▼ ${k.Downtrend} down</span></div></div>`}).join('');
-  const chips=FILTERS.map(([k,l])=>`<button class="chip" type="button" data-filter="${k}" aria-pressed="${FILTER===k}">${l}</button>`).join('');
+  const chips=FILTERS.map(([k,l])=>`<button class="chip" type="button" data-filter="${k}" aria-pressed="${FILTER===k}">${l}</button>`).join('')
+    +'<span class="sep" aria-hidden="true"></span><span class="lbl">Sort</span>'+SORTS.map(([k,l])=>`<button class="chip" type="button" data-sort="${k}" aria-pressed="${SORT===k}">${l}</button>`).join('');
+  const gk=s=>{const g=gap(COINS[s]);return g==null?Infinity:g};
+  const list=ORDER.filter(s=>COINS[s]&&passes(COINS[s]));
+  if(SORT==='gapup')list.sort((a,b)=>gk(a)-gk(b));else if(SORT==='gapdn')list.sort((a,b)=>(gk(b)===Infinity?-1:gk(b))-(gk(a)===Infinity?-1:gk(a)));
   const grow=GORDER.filter(s=>COINS[s]).map(s=>{const c=COINS[s];
     return `<div class="row" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}${unit(s)}</span></div>${TFG.map(t=>tfCell(c,t)).join('')}
     <div class="sr"><span>R ${nearZone(c,'R')}</span><span>S ${nearZone(c,'S')}</span></div></div>`}).join('');
-  const rows=ORDER.filter(s=>COINS[s]&&passes(COINS[s])).map(s=>{const c=COINS[s];
-    return `<div class="row c7" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}</span></div>${TFS.map(t=>tfCell(c,t,true)).join('')}
+  const rows=list.map(s=>{const c=COINS[s];
+    return `<div class="row c7" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}</span><span class="gap" title="Gap 4H→1D: how far apart the 4H and 1D flip levels are. Small: one level flips both. Big: a 4H flip is only a bounce inside the daily trend.">Gap ${gapTxt(gap(c))}</span></div>${TFS.map(t=>tfCell(c,t,true)).join('')}
     <div class="sr"><span>R ${nearZone(c,'R')}</span><span>S ${nearZone(c,'S')}</span></div></div>`}).join('')||'<div class="empty">No coins match this filter.</div>';
-  return `<section class="matrix">${m}</section><div class="chips" role="group" aria-label="Filter coins">${chips}</div>
+  return `<section class="matrix">${m}</section><div class="chips" role="group" aria-label="Filter and sort coins">${chips}</div>
   ${grow?`<section class="wrap" style="gap:8px"><h2>Market gauges</h2><div class="muted small">Market caps in USD billions, dominance in %. These lead the alt coins below.</div><section class="board"><div class="row head"><div>Gauge</div><div>1H</div><div>4H</div><div>1D</div><div>1W</div><div>Nearest strong S / R</div></div>${grow}</section></section>`:''}
   <h2>Coins</h2>
   <section class="board"><div class="row head c7"><div>Coin</div><div>1H</div><div>2H</div><div>4H</div><div>8H</div><div>12H</div><div>1D</div><div>1W</div><div>Strong S / R</div></div>${rows}</section>
@@ -226,7 +237,8 @@ function render(){
   $('main').innerHTML=h&&COINS[h]?renderCoin(h):renderOverview();
 }
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){const k=g.getAttribute('data-go');location.hash=k==='overview'?'':k;if(k==='overview')render();window.scrollTo(0,0);return}
-  const fb=e.target.closest('[data-filter]');if(fb){FILTER=fb.getAttribute('data-filter');render()}});
+  const fb=e.target.closest('[data-filter]');if(fb){FILTER=fb.getAttribute('data-filter');render();return}
+  const sb=e.target.closest('[data-sort]');if(sb){SORT=sb.getAttribute('data-sort');render()}});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest&&e.target.closest('.row[data-go]');if(g)g.click()}});
 window.addEventListener('hashchange',render);
 
