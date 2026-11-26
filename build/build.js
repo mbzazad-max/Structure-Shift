@@ -62,6 +62,25 @@ if (!FORCE && prev && prev.meta && prev.meta.inputs === finger && (readJSON(FRES
   process.exit(0);
 }
 
+// ---------- fake-out tags (claude/mstruct/fakeout_backtest.md), coins only, flips younger than 60 candles ----------
+// Settled flips: worked -> no tag; fake (closed 1 ATR back past the level before running 2 ATR) -> Fake-out (shown while the leg lasts).
+// 4H: Failed (next candle closed back inside the level) / Strong (EMA200 side + RVOL >= 2) / Weak (against EMA200 + RVOL < 1.5) / Normal.
+// 1D: Waiting (no next candle yet) / Confirmed (next candle held) / Failed; btc = BTC 1D structure pointed the same way when it flipped.
+const btcD = (() => { const b = CFG.coins.find(c => c.sym === 'BTC'); const B = b && load(b.series, '1D'); if (!B) return null;
+  const C = MS.closedOnly(B, '1D', NOW); return { t: C.t, ev: MS.structure(C, '1D').events }; })();
+function btcDirAt(T) { if (!btcD) return null; let d = 0; for (const e of btcD.ev) { if (btcD.t[e.i] + 86400 <= T) d = e.dir; else break; } return d; }
+function tagFlips(sym, res) {
+  for (const tf of ['4H', '1D']) { const x = res.tf[tf]; if (!x || !x.flipq) continue; const q = x.flipq;
+    // only fresh flips: younger than 60 candles and no BOS continuation since (a BOS means the new structure already proved itself)
+    const bosSince = x.last_event && x.last_event.kind === 'BOS' && x.last_event.t > q.t;
+    if (q.outcome === 'worked' || q.age >= 60 || bosSince) { q.tag = null; continue; }
+    if (q.outcome === 'fake') q.tag = 'Fake-out';
+    else if (q.held === false) q.tag = 'Failed';
+    else if (tf === '4H') q.tag = q.ema200 === true && q.rvol >= 2 ? 'Strong' : q.ema200 === false && q.rvol != null && q.rvol < 1.5 ? 'Weak' : 'Normal';
+    else q.tag = q.held === null ? 'Waiting' : 'Confirmed';
+    if (tf === '1D' && sym !== 'BTC') { const d = btcDirAt(q.t + 86400); q.btc = d ? d === q.dir : null; } }
+}
+
 // ---------- build ----------
 const coins = {}, kept = [], sources = {};
 let nOk = 0;
@@ -78,7 +97,8 @@ for (const r of rows) {
     const res = MS.analyze(r.sym, B4, BD || MS.toDay(B4), NOW, {
       B1, B2, B8, B12, symbol: r.tv, source: r.kind === 'coin' ? 'Binance' : (String(r.series).startsWith('binance') ? 'Binance' : 'TradingView')
     });
-    if (r.kind === 'gauge') { res.kind = 'gauge'; res.desc = r.desc; }
+    if (r.kind === 'gauge') { res.kind = 'gauge'; res.desc = r.desc; for (const t in res.tf) delete res.tf[t].flipq; }
+    else tagFlips(r.sym, res);
     if (!res.tf['4H']) { keepOld('fewer than 30 closed 4H candles'); continue; }
     if (prev && prev.coins && prev.coins[r.sym]) events = events.concat(MS.diff(prev.coins[r.sym], res, NOW));
     coins[r.sym] = res; nOk++;

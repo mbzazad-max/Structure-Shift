@@ -24,7 +24,8 @@ for (const [tf, P, X] of [['8H', 28800, B8], ['12H', 43200, B12]]) { const R = r
   const cut = { t: H1.t.slice(0, -1), o: H1.o.slice(0, -1), h: H1.h.slice(0, -1), l: H1.l.slice(0, -1), c: H1.c.slice(0, -1), v: H1.v.slice(0, -1) };
   if (NEW.to2H(cut).t.length !== B2.t.length - 1) bad('to2H kept a half-built 2H candle'); }
 for (const tf of ['4H', '1D', '1W']) {
-  const x = JSON.stringify(a.tf[tf]), y = JSON.stringify(b.tf[tf]);
+  const strip = o => { const c = Object.assign({}, o); delete c.flipq; return c; };   // flipq = extra facts added 26 Nov 2026
+  const x = JSON.stringify(strip(a.tf[tf])), y = JSON.stringify(b.tf[tf]);
   if (x !== y) bad(tf + ' differs from the original engine');
 }
 if (JSON.stringify(a.zones) !== JSON.stringify(b.zones)) bad('zones differ from the original engine');
@@ -32,6 +33,8 @@ const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'public', 'data.json'), 'ut
 for (const [k, c] of Object.entries(d.coins)) { if (!c.tf || !c.tf['4H'] || !c.tf['1D'] || !isFinite(c.price)) bad(k + ': missing 4H/1D/price');
   if (c.kind === 'gauge' && (c.tf['2H'] || c.tf['8H'] || c.tf['12H'])) bad(k + ': gauge has a 2H/8H/12H column');
   if (c.kind !== 'gauge' && (!c.tf['8H'] || !c.tf['12H'])) bad(k + ': coin has no 8H/12H');
+  for (const tf of ['4H', '1D']) { const q = c.tf[tf] && c.tf[tf].flipq; if (c.kind === 'gauge') { if (q) bad(k + ': gauge has flip tags'); continue; }
+    if (q && q.tag !== null && q.age < 60 && !['Strong', 'Weak', 'Normal', 'Failed', 'Waiting', 'Confirmed', 'Fake-out'].includes(q.tag)) bad(k + ' ' + tf + ': unknown flip tag ' + q.tag); }
   if (c.kind !== 'gauge' && c.tf['1H'] && !c.tf['2H']) bad(k + ': coin has 1H but no 2H'); }
 console.log(fail ? fail + ' check(s) failed' : `Engine OK: 1H, plus 2H/8H/12H for coins, added; 4H/1D/1W and zones identical to the original engine; ${Object.keys(d.coins).length} board rows complete.`);
 process.exit(fail ? 1 : 0);

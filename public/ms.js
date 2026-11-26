@@ -3,7 +3,9 @@
    19 Nov 2026: 1H timeframe added (structure, trend and flip levels; 5-bar pivots like 4H). Support/resistance
    clusters still come from 4H, 1D and 1W only, so the zones are unchanged. Everything else is the original engine.
    26 Nov 2026: 2H timeframe added for coins only (built from 1H with to2H; 5-bar pivots; structure only, zones unchanged).
-   26 Nov 2026: 8H and 12H added for coins only (built from 4H with to8H / to12H; 8H 4-bar, 12H 3-bar pivots; structure only). */
+   26 Nov 2026: 8H and 12H added for coins only (built from 4H with to8H / to12H; 8H 4-bar, 12H 3-bar pivots; structure only).
+   26 Nov 2026: `flipq` on 4H and 1D = facts about the candle that flipped the current structure (fake-out study,
+   claude/mstruct/fakeout_backtest.md): age, RVOL vs prior 20 candles, side of EMA200, whether the next candle held past the level. */
 (function(root){
 'use strict';
 const H1=3600,H2=7200,H4=14400,H8=28800,H12=43200,D1=86400,W1=604800;
@@ -89,6 +91,16 @@ function analyzeTF(B,tf,live){
  else why=swTxt+', EMAs not aligned with structure';
  // leg extreme since last break
  const ev=last(S.events)||null;
+ // flip quality (4H / 1D only): the CHoCH that started the current structure
+ let flipq=null;
+ if(tf==='4H'||tf==='1D'){const fl=S.events.filter(e=>e.kind==='CHoCH').pop();
+  if(fl&&fl.i>=20){const i=fl.i,up=fl.dir>0;let va=0;for(let j=i-20;j<i;j++)va+=B.v[j]||0;va/=20;
+   const e2=i>=199?ema(B.c.slice(0,i+1),200):null;
+   flipq={t:B.t[i],dir:fl.dir,level:fl.level,age:L-1-i,rvol:va>0?(B.v[i]||0)/va:null,
+    ema200:e2==null?null:(up?B.c[i]>e2:B.c[i]<e2),held:i+1<L?(up?B.c[i+1]>fl.level:B.c[i+1]<fl.level):null,outcome:null};
+   // settled? worked = price ran 2 ATR past the level (wick) before closing 1 ATR back on the wrong side; fake = the reverse (study rule)
+   const a0=atr(slice(B,0,i+1)),sg=up?1:-1;
+   if(a0)for(let j=i+1;j<L&&j<=i+60;j++){if(sg*(B.c[j]-fl.level)/a0<=-1){flipq.outcome='fake';break}if(sg*((up?B.h[j]:B.l[j])-fl.level)/a0>=2){flipq.outcome='worked';break}}}}
  const legHi=B.h[maxIdx(B.h,S.legStart,L-1)],legLo=B.l[minIdx(B.l,S.legStart,L-1)];
  let shift=null,cont=null;
  if(S.dir>0&&S.prot){shift={to:'Bearish',kind:'CHoCH',level:S.prot.p,t:B.t[S.prot.i],side:'below'};
@@ -109,7 +121,7 @@ function analyzeTF(B,tf,live){
   trend,why,structure:S.dir>0?'Bullish':S.dir<0?'Bearish':'Undefined',
   last_event:ev?{kind:ev.kind,dir:ev.dir,level:ev.level,t:ev.t}:null,
   shift,cont,minor,pending:pend,cont_pending:contPend,fib,
-  swings:{h:[h0&&h0.p,h1&&h1.p],l:[l0&&l0.p,l1&&l1.p]},
+  swings:{h:[h0&&h0.p,h1&&h1.p],l:[l0&&l0.p,l1&&l1.p]},flipq,
   _S:S,_PH:PH,_PL:PL}}
 
 // ---------- confluence zones ----------

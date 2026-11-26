@@ -21,6 +21,8 @@ Live (owner login): https://dashboards.mbzazad.workers.dev/structure-shift/
   1H column added and the artifact's own data code (claude.ai database, TradingView refresh button) removed, so the page reads
   only the built data.json; `cloud.js` adds Refresh, the freshness strip and the
   "← Dashboards" link. `reference/` keeps the artifact's original page and engine; `reference/SHA256SUMS` locks the files.
+- **Fake-out tags** (26 Nov 2026): fresh 4H/1D coin flips get Strong / Weak / Normal (4H), Waiting / Confirmed (+BTC) (1D),
+  Failed or Fake-out, from the study in the Trading project (claude/mstruct/fakeout_backtest.md). Engine adds `flipq`; build/build.js sets the tag.
 - **Tests**: `node tests/engine.js` (run by the workflow): 1H present, and 4H / 1D / 1W and the zones identical to the original engine.
 
 Config: `config/board.json` (rows, Market-Data series, scale). Removed rows: MNT, VVV, LIT, LEO, XMR (not on Binance).

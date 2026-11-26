@@ -46,6 +46,9 @@ button{font:inherit}
 .Uptrend,.Bullish{background:var(--bull-bg);color:var(--bull)} .Downtrend,.Bearish{background:var(--bear-bg);color:var(--bear)} .Range,.Undefined{background:var(--rng-bg);color:var(--rng)}
 .up{color:var(--bull)} .dn{color:var(--bear)} .rg{color:var(--rng)}
 .flag{background:var(--rng-bg);color:var(--rng)}
+.qt{display:inline-block;font:600 10.5px/1.5 var(--display);letter-spacing:.04em;text-transform:uppercase;border:1px solid currentColor;border-radius:4px;padding:0 4px;white-space:nowrap}
+.qt.mu{color:var(--muted)}
+.qnote{font-size:13px;color:var(--muted)}
 /* summary matrix */
 .matrix{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
 .matrix .mrow{gap:2px 8px;font-size:12px}
@@ -133,7 +136,7 @@ footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
   </header>
   <main id="main" class="wrap" aria-live="polite"></main>
   <footer>
-    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H, 2H and 4H: 5-bar pivots, 8H: 4-bar, 12H and 1D: 3-bar, 1W: 2-bar; 2H, 8H and 12H are for coins only). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree. <b>Gap</b> (under each coin's price) is how far apart the 4H and 1D flip levels are: small means one level would flip both, big means a 4H flip is only a bounce inside the daily trend.</div>
+    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H, 2H and 4H: 5-bar pivots, 8H: 4-bar, 12H and 1D: 3-bar, 1W: 2-bar; 2H, 8H and 12H are for coins only). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree. <b>Fake-out tags</b> mark fresh 4H and 1D flips (under 60 candles, no new break since), from a backtest of every flip on these coins since 2017: 4H <i>Strong</i> (EMA200 side + 2× volume) or <i>Weak</i> (against EMA200, under 1.5× volume); 1D <i>Confirmed</i> once the next daily candle holds (+BTC when BTC's 1D agrees); <i>Failed</i> when the next candle closes back inside (2 in 3 become fake-outs); <i>Fake-out</i> once price closes 1 ATR back past the level. Even the best group still had about 40% fake-outs. <b>Gap</b> (under each coin's price) is how far apart the 4H and 1D flip levels are: small means one level would flip both, big means a 4H flip is only a bounce inside the daily trend.</div>
     <div><b>Support and resistance</b> are clusters where several independent levels overlap: fib retracements (0.382 to 0.786) and extensions of the active leg on 4H, 1D and 1W (1H, 2H, 8H and 12H are structure only), the 1-year range fib, unfilled fair value gaps, recent swing highs and lows, structure levels and the 1D/1W EMA200 and 1W EMA50. Strong means 3 or more methods across timeframes, or a fib and an FVG together. Weak clusters are hidden.</div>
     <div><b>Data.</b> This board reads only from <b>Market-Data</b>, the shared candle store every dashboard uses. Market-Data holds the coins as Binance spot USDT candles (1H, 4H, 1D; topped up every 4 hours, 7 minutes after each 4H close) and the market gauges as TradingView candles (1H, 4H; loaded once a day by the 11:30 am task). ETHBTC is Binance. Here the coins' 2H is built from their 1H candles, 8H and 12H from 4H (only complete candles, UTC-aligned like Binance), 1W from 1D, and the gauges' 1D and 1W from 4H (gauges have no 2H, 8H or 12H). The board rebuilds by itself whenever Market-Data gets new candles and logs every change; Refresh asks for a rebuild now. Only closed candles are used, so a "pending" flag means the last close is already past the flip level of a higher timeframe. Analysis only, not financial advice.</div>
   </footer>
@@ -172,9 +175,22 @@ async function loadBaseline(){try{const r=await fetch('data.json');const s=await
 /* ---------- views ---------- */
 function counts(tf){const c={Uptrend:0,Range:0,Downtrend:0};ORDER.forEach(s=>{const x=COINS[s]&&COINS[s].tf[tf];if(x)c[x.trend]=(c[x.trend]||0)+1});return c}
 function nearZone(c,role){const z=c.zones&&c.zones[role]&&c.zones[role][0];return z?`<span class="num ${role==='S'?'up':'dn'}">${f(z.lo)}–${f(z.hi)}</span> <span class="muted">${pct(z.dist)}${z.strength==='Strong'?' · strong':''}</span>`:'<span class="muted">none</span>'}
+// fake-out tags on fresh 4H / 1D flips (claude/mstruct/fakeout_backtest.md; tags set by build/build.js)
+const QCLS={Strong:'up',Confirmed:'up',Weak:'dn',Failed:'dn','Fake-out':'dn',Normal:'mu',Waiting:'mu'};
+function qText(x,tf){const q=x.flipq;if(!q||!q.tag)return '';const v=q.rvol!=null?q.rvol.toFixed(1)+'× volume':'unknown volume',
+  side=q.ema200==null?'':(q.ema200?(q.dir>0?'above':'below'):(q.dir>0?'below':'above'))+' the EMA200',ago=q.age===0?'on the last candle':q.age+' candle'+(q.age>1?'s':'')+' ago';
+  const base=`${tf} flip ${q.dir>0?'up':'down'} ${ago}, on ${v}${side?', '+side:''}. `;
+  return base+({Strong:'Strong profile: in testing 43% of these were fake-outs (average 47%).',
+    Weak:'Weak profile: against the EMA200 on low volume; in testing 54% of these were fake-outs (average 47%).',
+    Normal:'Normal profile: about 47% of 4H flips were fake-outs in testing.',
+    Failed:'The next candle closed back inside the flip level: about 2 in 3 of these turn into fake-outs.',
+    Waiting:'Waiting for the next daily close: if it holds past the level, 42% were fake-outs in testing; if it closes back inside, 67%.',
+    Confirmed:'The next daily candle held past the level'+(q.btc===true?' and BTC 1D points the same way: 40% of these were fake-outs in testing (average 45%).':': 42% of these were fake-outs in testing (average 45%).'+(q.btc===false?' BTC 1D points the other way.':'')),
+    'Fake-out':'Price has already closed 1 ATR back past the flip level without following through: this flip is behaving as a fake-out.'})[q.tag]}
+const qTag=(x,tf)=>{const q=x.flipq;return q&&q.tag?` <span class="qt ${QCLS[q.tag]}" title="${esc(qText(x,tf))}">${q.tag}${q.tag==='Confirmed'&&q.btc===true?' +BTC':''}</span>`:''};
 function tfCell(c,tf,compact){const x=c.tf[tf];if(!x)return `<div class="tfc"><span class="lab">${tf}</span><span class="muted small">no data</span></div>`;
   const t=x.shift?`<span class="${x.shift.to==='Bullish'?'up':'dn'}" title="flips ${x.shift.side}">${x.shift.side==='above'?'▲':'▼'}</span>${compact?'':' flips '+x.shift.side} <span class="num">${f(x.shift.level)}</span> ${pct(x.dist_shift)}`:(compact?'no flip yet':'no flip level yet');
-  return `<div class="tfc"><span class="lab">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="${cls(x.structure)}" title="${x.structure} structure">${arrow(x.structure)}</span>${x.pending?' <span class="pill flag" title="Price is beyond the flip level; needs a close">pending</span>':''}</span><span class="trig">${t}</span></div>`}
+  return `<div class="tfc"><span class="lab">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="${cls(x.structure)}" title="${x.structure} structure">${arrow(x.structure)}</span>${x.pending?' <span class="pill flag" title="Price is beyond the flip level; needs a close">pending</span>':''}${qTag(x,tf)}</span><span class="trig">${t}</span></div>`}
 // Gap 4H->1D: distance between the 4H and 1D flip levels (larger / smaller - 1). Small = one key level flips both; big = a 4H flip is only a bounce inside the daily trend.
 function gap(c){const a=c.tf['4H']&&c.tf['4H'].shift,b=c.tf['1D']&&c.tf['1D'].shift;if(!a||!b||!(a.level>0)||!(b.level>0))return null;return (Math.max(a.level,b.level)/Math.min(a.level,b.level)-1)*100}
 const gapTxt=g=>g==null?'-':(g<10?g.toFixed(1):Math.round(g))+'%';
@@ -214,7 +230,7 @@ function tfCard(c,tf){const x=c.tf[tf];if(!x)return `<div class="card"><div clas
   const mi=x.minor?`<div class="small muted">Early warning: a ${tf} close ${x.minor.side} the internal swing at <span class="num">${f(x.minor.level)}</span> (${pct((x.minor.level/c.price-1)*100)}) breaks the latest leg before the full flip.</div>`:'';
   return `<div class="card"><div class="top"><span class="tfname">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="pill ${x.structure}">${arrow(x.structure)} ${x.structure}</span></span></div>
    <dl class="kv"><dt>Why</dt><dd>${esc(x.why)}</dd><dt>Last event</dt><dd>${evTxt}</dd><dt>Swing highs</dt><dd class="num">${f(x.swings.h[0])} → ${f(x.swings.h[1])}</dd><dt>Swing lows</dt><dd class="num">${f(x.swings.l[0])} → ${f(x.swings.l[1])}</dd><dt>Last close</dt><dd><span class="num">${f(x.close)}</span> <span class="muted small">bar ${when(x.t,true)}</span></dd></dl>
-   ${sh}${ct}${mi}</div>`}
+   ${x.flipq&&x.flipq.tag?`<div class="qnote">${qTag(x,tf)} ${esc(qText(x,tf))}</div>`:''}${sh}${ct}${mi}</div>`}
 function zoneHtml(z){return `<div class="z ${z.role}"><div class="zt"><span class="rng">${f(z.lo)} – ${f(z.hi)}</span><span class="small">${pct(z.dist)}</span></div>
   <div>${z.strength==='Strong'?'<span class="tag str">STRONG</span>':'<span class="tag">MODERATE</span>'}${z.methods.map(m=>`<span class="tag">${m}</span>`).join('')}${z.tfs.map(t=>`<span class="tag">${t}</span>`).join('')}<span class="muted small">score ${z.score}</span></div>
   <details><summary>${z.labels.length} confluences</summary><ul>${z.labels.map(l=>`<li>${esc(l)}</li>`).join('')}</ul></details></div>`}
