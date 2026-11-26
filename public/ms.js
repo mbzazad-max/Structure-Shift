@@ -1,14 +1,15 @@
 /* Market-structure engine: trend, BOS/CHoCH state + shift trigger, confluence S/R (fib + FVG + swings + EMA).
    Works in the browser (window.MS) and in node (module.exports). Bars: {t:[sec],o,h,l,c,v}.
    19 Nov 2026: 1H timeframe added (structure, trend and flip levels; 5-bar pivots like 4H). Support/resistance
-   clusters still come from 4H, 1D and 1W only, so the zones are unchanged. Everything else is the original engine. */
+   clusters still come from 4H, 1D and 1W only, so the zones are unchanged. Everything else is the original engine.
+   26 Nov 2026: 2H timeframe added for coins only (built from 1H with to2H; 5-bar pivots; structure only, zones unchanged). */
 (function(root){
 'use strict';
-const H1=3600,H4=14400,D1=86400,W1=604800;
-const TFSEC={'1H':H1,'4H':H4,'1D':D1,'1W':W1};
-const TFS=['1H','4H','1D','1W'];
-const PIV={'1H':5,'4H':5,'1D':3,'1W':2};           // pivot left/right bars per timeframe
-const TFW={'1H':0.5,'4H':1,'1D':1.5,'1W':2};          // weight of a level by timeframe
+const H1=3600,H2=7200,H4=14400,D1=86400,W1=604800;
+const TFSEC={'1H':H1,'2H':H2,'4H':H4,'1D':D1,'1W':W1};
+const TFS=['1H','2H','4H','1D','1W'];
+const PIV={'1H':5,'2H':5,'4H':5,'1D':3,'1W':2};           // pivot left/right bars per timeframe
+const TFW={'1H':0.5,'2H':0.75,'4H':1,'1D':1.5,'1W':2};          // weight of a level by timeframe
 const slice=(B,a,b)=>{const o={};for(const k of 'tohlcv')o[k]=(B[k]||[]).slice(a,b);return o};
 const last=a=>a[a.length-1];
 function ema(c,n){if(c.length<n)return null;let k=2/(n+1),e=c.slice(0,n).reduce((a,b)=>a+b,0)/n;for(let i=n;i<c.length;i++)e=c[i]*k+e*(1-k);return e}
@@ -23,6 +24,9 @@ function resample(B,period,anchor){const o={t:[],o:[],h:[],l:[],c:[],v:[]};let c
  return o}
 const MON=345600; // 1970-01-05 00:00 UTC, a Monday
 const toWeek=B=>resample(B,W1,MON), toDay=B=>resample(B,D1,0);
+// 2H from 1H (UTC-aligned like Binance 2h candles); a 2H candle is kept only when both of its 1H candles exist
+function to2H(B){const R=resample(B,H2,0),n={};B.t.forEach(t=>{const k=Math.floor(t/H2)*H2;n[k]=(n[k]||0)+1});
+ const keep=R.t.map(t=>n[t]===2),o={};for(const k of 'tohlcv')o[k]=(R[k]||[]).filter((_,i)=>keep[i]);return o}
 
 // ---------- swings ----------
 // simpler, unambiguous pivot rule: strictly higher than right side, >= left side
@@ -146,7 +150,8 @@ function zones(TF,B,px){const aD=TF['1D'].atr||px*0.03,band=0.1*aD,C=candidates(
 
 // ---------- coin analysis ----------
 /* B4: 4H bars, BD: 1D bars (may include forming bars), now: unix sec. live: optional live price.
-   opts.B1: 1H bars (optional). With 1H the price is the last closed 1H close. */
+   opts.B1: 1H bars (optional). With 1H the price is the last closed 1H close.
+   opts.B2: 2H bars (optional, coins only: to2H(B1)). */
 function analyze(sym,B4,BD,now,opts){opts=opts||{};
  const c1=opts.B1&&opts.B1.c&&opts.B1.c.length?closedOnly(opts.B1,'1H',now):null;
  const c4=closedOnly(B4,'4H',now);
@@ -155,6 +160,8 @@ function analyze(sym,B4,BD,now,opts){opts=opts||{};
  const cw=closedOnly(toWeek(BD&&BD.c.length?BD:toDay(B4)),'1W',now);
  const B={'4H':c4.c.length>1000?slice(c4,-1000):c4,'1D':cd.c.length>1200?slice(cd,-1200):cd,'1W':cw};
  if(c1)B['1H']=c1.c.length>1000?slice(c1,-1000):c1;
+ const c2=opts.B2&&opts.B2.c&&opts.B2.c.length?closedOnly(opts.B2,'2H',now):null;
+ if(c2)B['2H']=c2.c.length>1000?slice(c2,-1000):c2;
  const TF={};for(const tf of TFS)if(B[tf]&&B[tf].c.length>=30)TF[tf]=analyzeTF(B[tf],tf,live);
  const Zs=TF['1D']?zones(TF,B,live):{S:[],R:[],IN:[]};
  const tfo={};for(const tf in TF){const r=Object.assign({},TF[tf]);delete r._S;delete r._PH;delete r._PL;
@@ -177,6 +184,6 @@ function fmt(x){if(x==null||!isFinite(x))return '-';const a=Math.abs(x);
  if(a>=1000)return x.toLocaleString('en-US',{maximumFractionDigits:0});if(a>=100)return x.toFixed(1);if(a>=10)return x.toFixed(2);
  if(a>=1)return x.toFixed(3);if(a>=0.1)return x.toFixed(4);if(a>=0.01)return x.toFixed(5);return x.toPrecision(3)}
 
-const api={analyze,diff,fmt,toWeek,toDay,closedOnly,structure,fvgs,atr,ema,piv,TFSEC,TFS};
+const api={analyze,diff,fmt,toWeek,toDay,to2H,closedOnly,structure,fvgs,atr,ema,piv,TFSEC,TFS};
 if(typeof module!=='undefined')module.exports=api;else root.MS=api;
 })(typeof window!=='undefined'?window:globalThis);
