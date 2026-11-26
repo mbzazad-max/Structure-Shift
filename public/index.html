@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: summary matrix up top, then one row per coin with five timeframe cells (1H, 2H, 4H, 1D, 1W; gauges four, no 2H; two per row on phones); #SYM opens a coin sheet. */
+/* Layout: summary matrix up top, then one row per coin with seven timeframe cells (1H, 2H, 4H, 8H, 12H, 1D, 1W; gauges four: 1H, 4H, 1D, 1W; two per row on phones); #SYM opens a coin sheet. */
 :root{
   --bg:#eef1f4; --panel:#ffffff; --ink:#15202b; --muted:#5b6b7a; --line:#d6dde4; --soft:#e5eaef;
   --bull:#0b7a63; --bull-bg:#dcf1ea; --bear:#b8432a; --bear-bg:#f8e3dc; --rng:#8a6400; --rng-bg:#f6ecd0;
@@ -47,7 +47,9 @@ button{font:inherit}
 .up{color:var(--bull)} .dn{color:var(--bear)} .rg{color:var(--rng)}
 .flag{background:var(--rng-bg);color:var(--rng)}
 /* summary matrix */
-.matrix{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.matrix{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.matrix .mrow{gap:2px 8px;font-size:12px}
+@media (max-width:1100px){.matrix{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .mcell{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
 .bar{display:flex;height:8px;border-radius:9px;overflow:hidden;background:var(--soft)}
 .bar span:nth-child(1){background:var(--bull)}.bar span:nth-child(2){background:var(--rng)}.bar span:nth-child(3){background:var(--bear)}
@@ -59,7 +61,9 @@ button{font:inherit}
 /* board */
 .board{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .row{display:grid;grid-template-columns:100px repeat(4,minmax(0,1fr)) minmax(0,1.05fr);gap:0;border-top:1px solid var(--line);cursor:pointer}
-.row.c5{grid-template-columns:100px repeat(5,minmax(0,1fr)) minmax(0,1.05fr)}
+.row.c7{grid-template-columns:96px repeat(7,minmax(0,1fr)) minmax(0,1.25fr)}
+.row.c7>div{padding:9px 8px}
+.row.c7 .pill{padding:1px 6px;font-size:11px}
 .row:first-child{border-top:0}
 .row:hover{background:var(--soft)}
 .row.head{cursor:default;background:var(--soft);font:600 12px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -73,7 +77,8 @@ button{font:inherit}
 @media (max-width:820px){
   .matrix{grid-template-columns:repeat(2,minmax(0,1fr))}
   .row.head{display:none}
-  .row,.row.c5{grid-template-columns:repeat(2,minmax(0,1fr));padding:4px 0}
+  .row,.row.c7{grid-template-columns:repeat(2,minmax(0,1fr));padding:4px 0}
+  .row.c7>div{padding:9px 12px}
   .row .coin{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;padding-bottom:2px}
   .row .coin b{display:inline}
   .tfc{border-left:0;border-top:0}.tfc:nth-of-type(odd){border-left:1px solid var(--line)}
@@ -85,9 +90,8 @@ button{font:inherit}
 .dhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline}
 .dhead .px{font:500 24px var(--mono)}
 .tfgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.tfgrid.c5{grid-template-columns:repeat(5,minmax(0,1fr))}
-@media (max-width:1100px){.tfgrid,.tfgrid.c5{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:640px){.tfgrid,.tfgrid.c5{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:1100px){.tfgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.tfgrid{grid-template-columns:minmax(0,1fr)}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px;align-content:start}
 .card .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .tfname{font:700 22px var(--display)}
@@ -126,9 +130,9 @@ footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
   </header>
   <main id="main" class="wrap" aria-live="polite"></main>
   <footer>
-    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H, 2H and 4H: 5-bar pivots, 1D: 3-bar, 1W: 2-bar; 2H is for coins only). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree.</div>
-    <div><b>Support and resistance</b> are clusters where several independent levels overlap: fib retracements (0.382 to 0.786) and extensions of the active leg on 4H, 1D and 1W (1H and 2H are structure only), the 1-year range fib, unfilled fair value gaps, recent swing highs and lows, structure levels and the 1D/1W EMA200 and 1W EMA50. Strong means 3 or more methods across timeframes, or a fib and an FVG together. Weak clusters are hidden.</div>
-    <div><b>Data.</b> This board reads only from <b>Market-Data</b>, the shared candle store every dashboard uses. Market-Data holds the coins as Binance spot USDT candles (1H, 4H, 1D; topped up every 4 hours, 7 minutes after each 4H close) and the market gauges as TradingView candles (1H, 4H; loaded once a day by the 11:30 am task). ETHBTC is Binance. Here the coins' 2H is built from their 1H candles, 1W from 1D, and the gauges' 1D and 1W from 4H (gauges have no 2H). The board rebuilds by itself whenever Market-Data gets new candles and logs every change; Refresh asks for a rebuild now. Only closed candles are used, so a "pending" flag means the last close is already past the flip level of a higher timeframe. Analysis only, not financial advice.</div>
+    <div><b>How to read it.</b> Structure follows candle <i>closes</i> through confirmed swing points (1H, 2H and 4H: 5-bar pivots, 8H: 4-bar, 12H and 1D: 3-bar, 1W: 2-bar; 2H, 8H and 12H are for coins only). A close beyond the last swing in trend direction is a BOS (continuation); a close beyond the protected swing that started the current leg is a CHoCH (structure flips). Trend is Uptrend when swings print higher highs and higher lows inside bullish structure, Downtrend for the mirror, and Range when swings and structure disagree.</div>
+    <div><b>Support and resistance</b> are clusters where several independent levels overlap: fib retracements (0.382 to 0.786) and extensions of the active leg on 4H, 1D and 1W (1H, 2H, 8H and 12H are structure only), the 1-year range fib, unfilled fair value gaps, recent swing highs and lows, structure levels and the 1D/1W EMA200 and 1W EMA50. Strong means 3 or more methods across timeframes, or a fib and an FVG together. Weak clusters are hidden.</div>
+    <div><b>Data.</b> This board reads only from <b>Market-Data</b>, the shared candle store every dashboard uses. Market-Data holds the coins as Binance spot USDT candles (1H, 4H, 1D; topped up every 4 hours, 7 minutes after each 4H close) and the market gauges as TradingView candles (1H, 4H; loaded once a day by the 11:30 am task). ETHBTC is Binance. Here the coins' 2H is built from their 1H candles, 8H and 12H from 4H (only complete candles, UTC-aligned like Binance), 1W from 1D, and the gauges' 1D and 1W from 4H (gauges have no 2H, 8H or 12H). The board rebuilds by itself whenever Market-Data gets new candles and logs every change; Refresh asks for a rebuild now. Only closed candles are used, so a "pending" flag means the last close is already past the flip level of a higher timeframe. Analysis only, not financial advice.</div>
   </footer>
 </div>
 
@@ -138,7 +142,7 @@ footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
 const ORDER=['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','LTC','XLM','TRX','SHIB','SUI','NEAR','ICP','AAVE','UNI','ENA','TAO','RENDER','FET','ONDO','JUP','RAY','PEPE','WIF','ARB','LDO','INJ','WLD','ZEC','PUMP','ASTER','GRAM','HYPE'];
 const SYMS={};
 const tvSym=s=>SYMS[s]||('BINANCE:'+s+'USDT');
-const TFS=['1H','2H','4H','1D','1W'];               // coins
+const TFS=['1H','2H','4H','8H','12H','1D','1W'];    // coins
 const TFG=['1H','4H','1D','1W'];                    // market gauges: no 2H
 const tfsOf=s=>GAUGES[s]?TFG:TFS;
 const GAUGES={'TOTAL2ES':['CRYPTOCAP:TOTAL2ES',1e-9],'TOTAL3ES':['CRYPTOCAP:TOTAL3ES',1e-9],'OTHERS':['CRYPTOCAP:OTHERS',1e-9],'TOTAL':['CRYPTOCAP:TOTAL',1e-9],'TOTALES':['CRYPTOCAP:TOTALES',1e-9],'BTCCAP':['CRYPTOCAP:BTC',1e-9],'BTC.D':['CRYPTOCAP:BTC.D',1],'USDT.D+USDC.D':['CRYPTOCAP:USDT.D',1,'CRYPTOCAP:USDC.D'],'USDT.D':['CRYPTOCAP:USDT.D',1],'ETHBTC':['BINANCE:ETHBTC',1],'STABLE.C':['CRYPTOCAP:STABLE.C',1e-9],'MEME.C':['CRYPTOCAP:MEME.C',1e-9]};
@@ -165,8 +169,8 @@ async function loadBaseline(){try{const r=await fetch('data.json');const s=await
 /* ---------- views ---------- */
 function counts(tf){const c={Uptrend:0,Range:0,Downtrend:0};ORDER.forEach(s=>{const x=COINS[s]&&COINS[s].tf[tf];if(x)c[x.trend]=(c[x.trend]||0)+1});return c}
 function nearZone(c,role){const z=c.zones&&c.zones[role]&&c.zones[role][0];return z?`<span class="num ${role==='S'?'up':'dn'}">${f(z.lo)}–${f(z.hi)}</span> <span class="muted">${pct(z.dist)}${z.strength==='Strong'?' · strong':''}</span>`:'<span class="muted">none</span>'}
-function tfCell(c,tf){const x=c.tf[tf];if(!x)return `<div class="tfc"><span class="lab">${tf}</span><span class="muted small">no data</span></div>`;
-  const t=x.shift?`<span class="${x.shift.to==='Bullish'?'up':'dn'}">${x.shift.side==='above'?'▲':'▼'}</span> flips ${x.shift.side} <span class="num">${f(x.shift.level)}</span> ${pct(x.dist_shift)}`:'no flip level yet';
+function tfCell(c,tf,compact){const x=c.tf[tf];if(!x)return `<div class="tfc"><span class="lab">${tf}</span><span class="muted small">no data</span></div>`;
+  const t=x.shift?`<span class="${x.shift.to==='Bullish'?'up':'dn'}" title="flips ${x.shift.side}">${x.shift.side==='above'?'▲':'▼'}</span>${compact?'':' flips '+x.shift.side} <span class="num">${f(x.shift.level)}</span> ${pct(x.dist_shift)}`:(compact?'no flip yet':'no flip level yet');
   return `<div class="tfc"><span class="lab">${tf}</span><span><span class="pill ${x.trend}">${x.trend}</span> <span class="${cls(x.structure)}" title="${x.structure} structure">${arrow(x.structure)}</span>${x.pending?' <span class="pill flag" title="Price is beyond the flip level; needs a close">pending</span>':''}</span><span class="trig">${t}</span></div>`}
 const FILTERS=[['all','All'],['pend','Shift pending'],['near','Flip within 3%'],['aup','All TFs up'],['adn','All TFs down'],['mixed','Mixed']];
 function passes(c){if(FILTER==='all')return true;
@@ -182,12 +186,12 @@ function renderOverview(){
     return `<div class="row" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}${unit(s)}</span></div>${TFG.map(t=>tfCell(c,t)).join('')}
     <div class="sr"><span>R ${nearZone(c,'R')}</span><span>S ${nearZone(c,'S')}</span></div></div>`}).join('');
   const rows=ORDER.filter(s=>COINS[s]&&passes(COINS[s])).map(s=>{const c=COINS[s];
-    return `<div class="row c5" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}</span></div>${TFS.map(t=>tfCell(c,t)).join('')}
+    return `<div class="row c7" data-go="${s}" role="link" tabindex="0" aria-label="Open ${s}"><div class="coin"><b>${s}</b><span class="num small">${f(c.price)}</span></div>${TFS.map(t=>tfCell(c,t,true)).join('')}
     <div class="sr"><span>R ${nearZone(c,'R')}</span><span>S ${nearZone(c,'S')}</span></div></div>`}).join('')||'<div class="empty">No coins match this filter.</div>';
   return `<section class="matrix">${m}</section><div class="chips" role="group" aria-label="Filter coins">${chips}</div>
   ${grow?`<section class="wrap" style="gap:8px"><h2>Market gauges</h2><div class="muted small">Market caps in USD billions, dominance in %. These lead the alt coins below.</div><section class="board"><div class="row head"><div>Gauge</div><div>1H</div><div>4H</div><div>1D</div><div>1W</div><div>Nearest strong S / R</div></div>${grow}</section></section>`:''}
   <h2>Coins</h2>
-  <section class="board"><div class="row head c5"><div>Coin</div><div>1H</div><div>2H</div><div>4H</div><div>1D</div><div>1W</div><div>Nearest strong S / R</div></div>${rows}</section>
+  <section class="board"><div class="row head c7"><div>Coin</div><div>1H</div><div>2H</div><div>4H</div><div>8H</div><div>12H</div><div>1D</div><div>1W</div><div>Strong S / R</div></div>${rows}</section>
   <section class="wrap" style="gap:8px"><h2>Status changes</h2>${logHtml(LOG)}</section>`}
 function logHtml(list){const L=list.slice().sort((a,b)=>b.t-a.t).slice(0,60);
   if(!L.length)return '<div class="log"><div class="empty" style="display:block">No changes recorded yet. Each rebuild compares against the previous snapshot and lists structure flips, BOS continuations, trend changes and pending shifts here.</div></div>';
@@ -208,7 +212,7 @@ function renderCoin(s){const c=COINS[s];if(!c)return renderOverview();
   return `<button class="btn back" type="button" data-go="overview">← All coins</button>
   <div class="dhead"><h1>${s}</h1><span class="px">${f(c.price)}${unit(s)}</span><span class="pill ${c.align==='All up'?'Uptrend':c.align==='All down'?'Downtrend':'Range'}">${c.align}</span>
    <span class="muted small">${c.desc?esc(c.desc)+' · ':''}${esc(c.symbol||gSym(s))} · ${esc(c.source||'')} · built ${when(c.built,true)} Sydney</span></div>
-  <section class="tfgrid${tfsOf(s).length===5?' c5':''}">${tfsOf(s).map(t=>tfCard(c,t)).join('')}</section>
+  <section class="tfgrid">${tfsOf(s).map(t=>tfCard(c,t)).join('')}</section>
   ${Z.IN&&Z.IN.length?`<div class="note">Price is inside ${Z.IN.length===1?'a':Z.IN.length} confluence zone${Z.IN.length>1?'s':''}: ${Z.IN.map(z=>f(z.lo)+' – '+f(z.hi)+' ('+z.strength.toLowerCase()+', '+z.methods.join('+')+')').join('; ')}.</div>`:''}
   <section class="zones"><div class="wrap" style="gap:8px"><h2>Resistance</h2>${Z.R.length?Z.R.map(zoneHtml).join(''):'<div class="muted">No strong or moderate resistance above.</div>'}</div>
    <div class="wrap" style="gap:8px"><h2>Support</h2>${Z.S.length?Z.S.map(zoneHtml).join(''):'<div class="muted">No strong or moderate support below.</div>'}</div></section>

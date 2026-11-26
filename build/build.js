@@ -4,7 +4,7 @@
    Reads closed candles from Market-Data (data/<source>/<SYMBOL>_<TF>.csv, time = candle open, unix s UTC),
    runs the board's own engine (public/ms.js) for every row in config/board.json and writes
    public/data.json (rows + status-change log) and public/freshness.json.
-   - Coins: Binance 1H, 4H and 1D. 2H is built from 1H (coins only, 26 Nov 2026), 1W from 1D.
+   - Coins: Binance 1H, 4H and 1D. 2H is built from 1H, 8H and 12H from 4H (coins only, 26 Nov 2026), 1W from 1D.
    - Gauges: TradingView 1H and 4H (1D and 1W resampled from 4H); USDT.D+USDC.D is the candle-by-candle sum, USDT.D alone is its own row; ETHBTC from Binance.
    - Skips the build when no input series changed since the last build (unless --force).
    - A row that cannot be built keeps its last good version and is listed in freshness.json "kept".
@@ -72,16 +72,17 @@ for (const r of rows) {
     const sc = r.scale || 1;
     const B1 = scale(load(r.series, '1H'), sc), B4 = scale(load(r.series, '4H'), sc);
     const BD = r.kind === 'coin' ? load(r.series, '1D') : null;
-    const B2 = r.kind === 'coin' && B1 ? MS.to2H(B1) : null;   // 2H for coins only, never for gauges
+    const isCoin = r.kind === 'coin';   // 2H / 8H / 12H for coins only, never for gauges
+    const B2 = isCoin && B1 ? MS.to2H(B1) : null, B8 = isCoin && B4 ? MS.to8H(B4) : null, B12 = isCoin && B4 ? MS.to12H(B4) : null;
     if (!B4) { keepOld('no 4H candles in Market-Data'); continue; }
     const res = MS.analyze(r.sym, B4, BD || MS.toDay(B4), NOW, {
-      B1, B2, symbol: r.tv, source: r.kind === 'coin' ? 'Binance' : (String(r.series).startsWith('binance') ? 'Binance' : 'TradingView')
+      B1, B2, B8, B12, symbol: r.tv, source: r.kind === 'coin' ? 'Binance' : (String(r.series).startsWith('binance') ? 'Binance' : 'TradingView')
     });
     if (r.kind === 'gauge') { res.kind = 'gauge'; res.desc = r.desc; }
     if (!res.tf['4H']) { keepOld('fewer than 30 closed 4H candles'); continue; }
     if (prev && prev.coins && prev.coins[r.sym]) events = events.concat(MS.diff(prev.coins[r.sym], res, NOW));
     coins[r.sym] = res; nOk++;
-    sources[r.sym] = { '1H': !!B1, '2H': r.kind === 'coin' && !!B1 ? 'from 1H' : false, '4H': true, '1D': r.kind === 'coin' ? (BD ? 'file' : 'from 4H') : 'from 4H' };
+    sources[r.sym] = { '1H': !!B1, '2H': isCoin && !!B1 ? 'from 1H' : false, '4H': true, '8H': isCoin ? 'from 4H' : false, '12H': isCoin ? 'from 4H' : false, '1D': r.kind === 'coin' ? (BD ? 'file' : 'from 4H') : 'from 4H' };
   } catch (e) { keepOld('engine error: ' + e.message); }
 }
 for (const e of events) e.id = ('e_' + e.t + '_' + e.sym + '_' + e.tf + '_' + e.type).replace(/[^A-Za-z0-9_\-]/g, '_');

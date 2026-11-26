@@ -1,6 +1,6 @@
 # Structure Shift board
 
-Market structure for 36 Binance coins on **1H, 2H, 4H, 1D and 1W** and 12 market gauges on **1H, 4H, 1D and 1W**: trend (Uptrend / Downtrend / Range),
+Market structure for 36 Binance coins on **1H, 2H, 4H, 8H, 12H, 1D and 1W** and 12 market gauges on **1H, 4H, 1D and 1W**: trend (Uptrend / Downtrend / Range),
 close-based BOS / CHoCH structure, the candle close that flips it, continuation level, pending flag, a status-change log,
 and strong support / resistance clusters (fib + FVG + swings + structure + EMA, from 4H, 1D and 1W).
 
@@ -10,8 +10,8 @@ Live (owner login): https://dashboards.mbzazad.workers.dev/structure-shift/
 - **Data**: the board reads ONLY from Market-Data (`mbzazad-max/market-data`), the shared candle store for every dashboard.
   It never calls Binance or TradingView itself. What Market-Data holds for it:
   - Coins: Binance spot USDT pairs, 1H, 4H, 1D (`binance/<SYM>USDT/<TF>`), fetched by Market-Data's own GitHub workflow
-    (binance.yml) every 4 hours, 7 min after each 4H close. 2H is built here from 1H (coins only, added 26 Nov 2026;
-    a 2H candle needs both of its 1H candles); 1W is built from 1D.
+    (binance.yml) every 4 hours, 7 min after each 4H close. 2H is built here from 1H, 8H and 12H from 4H (coins only, added 26 Nov 2026;
+    only complete, UTC-aligned candles, like Binance's 2h/8h/12h); 1W is built from 1D.
   - Gauges: TradingView `CRYPTOCAP:*` 1H and 4H, loaded by the daily 11:30 Sydney Claude task (TV_TASK.md); 1D and 1W built
     from 4H. USDT.D+USDC.D is the candle-by-candle sum; USDT.D also has its own row (added 20 Nov 2026). ETHBTC from Binance (1H, 4H).
 - **Build**: `.github/workflows/build.yml` runs when Market-Data imports a series the board uses (dispatched by Market-Data),
