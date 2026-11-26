@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-26 12:06 UTC",
- "checked_at": 1795694806,
+ "generated": "2026-11-26 12:16 UTC",
+ "checked_at": 1795695416,
  "series": [
   {
    "id": "binance/BTCUSDT/1H",
@@ -1717,8 +1717,47 @@
    "rows": 3335,
    "last_close": 1795636800,
    "fetched_at": 1795640569
+  },
+  {
+   "id": "tv/SP_SPX/1H",
+   "series": "tv/SP_SPX/1H",
+   "source": "tv",
+   "symbol": "SP:SPX",
+   "tf": "1H",
+   "period_s": 3600,
+   "built_from": 1795638600,
+   "last_open": 1795638600,
+   "rows": 20892,
+   "last_close": 1795642200,
+   "fetched_at": 1795694005
+  },
+  {
+   "id": "tv/SP_SPX/4H",
+   "series": "tv/SP_SPX/4H",
+   "source": "tv",
+   "symbol": "SP:SPX",
+   "tf": "4H",
+   "period_s": 14400,
+   "built_from": 1795631400,
+   "last_open": 1795631400,
+   "rows": 7752,
+   "last_close": 1795645800,
+   "fetched_at": 1795694005
+  },
+  {
+   "id": "tv/SP_SPX/1D",
+   "series": "tv/SP_SPX/1D",
+   "source": "tv",
+   "symbol": "SP:SPX",
+   "tf": "1D",
+   "period_s": 86400,
+   "built_from": 1795564800,
+   "last_open": 1795564800,
+   "rows": 4020,
+   "last_close": 1795651200,
+   "fetched_at": 1795694005
   }
  ],
  "kept": [],
- "last_result": "Built 48 of 48 rows, 29 status changes."
+ "last_result": "Built 49 of 49 rows, 0 status changes."
 }
