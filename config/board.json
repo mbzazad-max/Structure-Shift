@@ -1,5 +1,5 @@
 {
- "_about": "Every board row and the Market-Data series it is built from (<prefix>/<TF>). Coins: Binance 1H, 4H, 1D (2H built from 1H, 8H and 12H from 4H, coins only; 1W from 1D). Gauges: TradingView 1H and 4H, 1D and 1W resampled from 4H (ETHBTC: Binance 1H and 4H). Order = board order.",
+ "_about": "Every board row and the Market-Data series it is built from (<prefix>/<TF>). Coins: Binance 1H, 4H, 1D (2H built from 1H, 8H and 12H from 4H, coins only; 1W from 1D). Gauges: TradingView 1H and 4H, 1D and 1W resampled from 4H (SPX: its own 1D, 1W from 1D) (ETHBTC: Binance 1H and 4H). Order = board order.",
  "coins": [
   {
    "sym": "BTC",
@@ -518,6 +518,20 @@
    "tfs": [
     "1H",
     "4H"
+   ]
+  },
+  {
+   "sym": "SPX",
+   "tv": "SP:SPX",
+   "series": [
+    "tv/SP_SPX"
+   ],
+   "scale": 1,
+   "desc": "S&P 500 index (US market hours), points",
+   "tfs": [
+    "1H",
+    "4H",
+    "1D"
    ]
   }
  ],
