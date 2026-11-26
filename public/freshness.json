@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-26 06:50 UTC",
- "checked_at": 1795675803,
+ "generated": "2026-11-26 07:24 UTC",
+ "checked_at": 1795677871,
  "series": [
   {
    "id": "binance/BTCUSDT/1H",
@@ -9,11 +9,11 @@
    "symbol": "BTCUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670183
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677798
   },
   {
    "id": "binance/BTCUSDT/4H",
@@ -48,11 +48,11 @@
    "symbol": "ETHUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670186
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677801
   },
   {
    "id": "binance/ETHUSDT/4H",
@@ -87,11 +87,11 @@
    "symbol": "SOLUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670198
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677813
   },
   {
    "id": "binance/SOLUSDT/4H",
@@ -126,11 +126,11 @@
    "symbol": "BNBUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670183
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677797
   },
   {
    "id": "binance/BNBUSDT/4H",
@@ -165,11 +165,11 @@
    "symbol": "XRPUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670203
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677818
   },
   {
    "id": "binance/XRPUSDT/4H",
@@ -204,11 +204,11 @@
    "symbol": "ADAUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670180
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677794
   },
   {
    "id": "binance/ADAUSDT/4H",
@@ -243,11 +243,11 @@
    "symbol": "DOGEUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670184
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677799
   },
   {
    "id": "binance/DOGEUSDT/4H",
@@ -282,11 +282,11 @@
    "symbol": "AVAXUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670182
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677796
   },
   {
    "id": "binance/AVAXUSDT/4H",
@@ -321,11 +321,11 @@
    "symbol": "LINKUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670191
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677807
   },
   {
    "id": "binance/LINKUSDT/4H",
@@ -360,11 +360,11 @@
    "symbol": "LTCUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670192
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677807
   },
   {
    "id": "binance/LTCUSDT/4H",
@@ -399,11 +399,11 @@
    "symbol": "XLMUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670202
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677817
   },
   {
    "id": "binance/XLMUSDT/4H",
@@ -438,11 +438,11 @@
    "symbol": "TRXUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670199
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677815
   },
   {
    "id": "binance/TRXUSDT/4H",
@@ -477,11 +477,11 @@
    "symbol": "SHIBUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670197
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677812
   },
   {
    "id": "binance/SHIBUSDT/4H",
@@ -516,11 +516,11 @@
    "symbol": "SUIUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670198
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677813
   },
   {
    "id": "binance/SUIUSDT/4H",
@@ -555,11 +555,11 @@
    "symbol": "NEARUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670193
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677808
   },
   {
    "id": "binance/NEARUSDT/4H",
@@ -594,11 +594,11 @@
    "symbol": "ICPUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670189
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677804
   },
   {
    "id": "binance/ICPUSDT/4H",
@@ -633,11 +633,11 @@
    "symbol": "AAVEUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670179
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677793
   },
   {
    "id": "binance/AAVEUSDT/4H",
@@ -672,11 +672,11 @@
    "symbol": "UNIUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670200
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677815
   },
   {
    "id": "binance/UNIUSDT/4H",
@@ -711,11 +711,11 @@
    "symbol": "ENAUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670185
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677800
   },
   {
    "id": "binance/ENAUSDT/4H",
@@ -750,11 +750,11 @@
    "symbol": "TAOUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670199
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677814
   },
   {
    "id": "binance/TAOUSDT/4H",
@@ -789,11 +789,11 @@
    "symbol": "RENDERUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670196
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677811
   },
   {
    "id": "binance/RENDERUSDT/4H",
@@ -828,11 +828,11 @@
    "symbol": "FETUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670187
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677802
   },
   {
    "id": "binance/FETUSDT/4H",
@@ -867,11 +867,11 @@
    "symbol": "ONDOUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670193
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677809
   },
   {
    "id": "binance/ONDOUSDT/4H",
@@ -906,11 +906,11 @@
    "symbol": "JUPUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670190
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677805
   },
   {
    "id": "binance/JUPUSDT/4H",
@@ -945,11 +945,11 @@
    "symbol": "RAYUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670196
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677811
   },
   {
    "id": "binance/RAYUSDT/4H",
@@ -984,11 +984,11 @@
    "symbol": "PEPEUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670194
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677809
   },
   {
    "id": "binance/PEPEUSDT/4H",
@@ -1023,11 +1023,11 @@
    "symbol": "WIFUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670201
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677816
   },
   {
    "id": "binance/WIFUSDT/4H",
@@ -1062,11 +1062,11 @@
    "symbol": "ARBUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670181
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677795
   },
   {
    "id": "binance/ARBUSDT/4H",
@@ -1101,11 +1101,11 @@
    "symbol": "LDOUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670191
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677806
   },
   {
    "id": "binance/LDOUSDT/4H",
@@ -1140,11 +1140,11 @@
    "symbol": "INJUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670189
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677804
   },
   {
    "id": "binance/INJUSDT/4H",
@@ -1179,11 +1179,11 @@
    "symbol": "WLDUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670202
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677817
   },
   {
    "id": "binance/WLDUSDT/4H",
@@ -1218,11 +1218,11 @@
    "symbol": "ZECUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670204
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677819
   },
   {
    "id": "binance/ZECUSDT/4H",
@@ -1257,11 +1257,11 @@
    "symbol": "PUMPUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670195
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677810
   },
   {
    "id": "binance/PUMPUSDT/4H",
@@ -1296,11 +1296,11 @@
    "symbol": "ASTERUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670181
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677796
   },
   {
    "id": "binance/ASTERUSDT/4H",
@@ -1335,11 +1335,11 @@
    "symbol": "GRAMUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670187
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677802
   },
   {
    "id": "binance/GRAMUSDT/4H",
@@ -1374,11 +1374,11 @@
    "symbol": "HYPEUSDT",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1506,
-   "last_close": 1795669200,
-   "fetched_at": 1795670188
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1508,
+   "last_close": 1795676400,
+   "fetched_at": 1795677803
   },
   {
    "id": "binance/HYPEUSDT/4H",
@@ -1647,11 +1647,11 @@
    "symbol": "ETHBTC",
    "tf": "1H",
    "period_s": 3600,
-   "built_from": 1795665600,
-   "last_open": 1795665600,
-   "rows": 1666,
-   "last_close": 1795669200,
-   "fetched_at": 1795670185
+   "built_from": 1795672800,
+   "last_open": 1795672800,
+   "rows": 1668,
+   "last_close": 1795676400,
+   "fetched_at": 1795677800
   },
   {
    "id": "binance/ETHBTC/4H",
@@ -1720,5 +1720,5 @@
   }
  ],
  "kept": [],
- "last_result": "Built 48 of 48 rows, 0 status changes."
+ "last_result": "Built 48 of 48 rows, 18 status changes."
 }
