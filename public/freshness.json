@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-28 01:37 UTC",
- "checked_at": 1795829865,
+ "generated": "2026-11-28 01:49 UTC",
+ "checked_at": 1795830558,
  "series": [
   {
    "id": "binance/BTCUSDT/1H",
@@ -1738,11 +1738,11 @@
    "symbol": "SP:SPX",
    "tf": "4H",
    "period_s": 14400,
-   "built_from": 1795631400,
-   "last_open": 1795631400,
-   "rows": 7752,
-   "last_close": 1795645800,
-   "fetched_at": 1795694005
+   "built_from": 1795804200,
+   "last_open": 1795804200,
+   "rows": 7754,
+   "last_close": 1795818600,
+   "fetched_at": 1795830502
   },
   {
    "id": "tv/SP_SPX/1D",
@@ -1759,5 +1759,5 @@
   }
  ],
  "kept": [],
- "last_result": "Built 49 of 49 rows, 22 status changes."
+ "last_result": "Built 49 of 49 rows, 0 status changes."
 }
